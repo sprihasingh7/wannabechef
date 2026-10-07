@@ -716,34 +716,28 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    # Ingredients Input
-    pantry_input = st.text_input(
-        "🧂 Ingredients on hand (comma separated):",
-        placeholder="e.g. chicken, tomato, onion, garlic",
-        key="pantry_ingredients_input"
-    )
+    def set_pantry_preset(preset: str):
+        st.session_state["pantry_ingredients"] = preset
+
+    if "pantry_ingredients" not in st.session_state:
+        st.session_state["pantry_ingredients"] = ""
 
     # Quick recipe ingredient ideas
     st.caption("✨ Quick pantry ideas:")
     chip_cols = st.columns(2)
     with chip_cols[0]:
-        if st.button("🍗 Chicken Curry", use_container_width=True):
-            pantry_input = "chicken, onion, tomato, garlic, ginger"
-            st.session_state["pantry_ingredients_input"] = pantry_input
-            st.rerun()
-        if st.button("🍝 Garlic Pasta", use_container_width=True):
-            pantry_input = "pasta, olive oil, garlic, chilli, cheese"
-            st.session_state["pantry_ingredients_input"] = pantry_input
-            st.rerun()
+        st.button("🍗 Chicken Curry", on_click=set_pantry_preset, args=("chicken, onion, tomato, garlic, ginger",), use_container_width=True)
+        st.button("🍝 Garlic Pasta", on_click=set_pantry_preset, args=("pasta, olive oil, garlic, chilli, cheese",), use_container_width=True)
     with chip_cols[1]:
-        if st.button("🧀 Paneer Tikka", use_container_width=True):
-            pantry_input = "paneer, yogurt, onion, bell pepper, turmeric"
-            st.session_state["pantry_ingredients_input"] = pantry_input
-            st.rerun()
-        if st.button("🥗 Fresh Salad", use_container_width=True):
-            pantry_input = "lettuce, tomato, cucumber, carrot, olive oil"
-            st.session_state["pantry_ingredients_input"] = pantry_input
-            st.rerun()
+        st.button("🧀 Paneer Tikka", on_click=set_pantry_preset, args=("paneer, yogurt, onion, bell pepper, turmeric",), use_container_width=True)
+        st.button("🥗 Fresh Salad", on_click=set_pantry_preset, args=("lettuce, tomato, cucumber, carrot, olive oil",), use_container_width=True)
+
+    # Ingredients Input
+    pantry_input = st.text_input(
+        "🧂 Ingredients on hand (comma separated):",
+        placeholder="e.g. chicken, tomato, onion, garlic",
+        key="pantry_ingredients"
+    )
 
     st.markdown("---")
     st.markdown("### 🏷️ Filter Chapters")
@@ -1038,16 +1032,8 @@ with tab_ai:
     </div>
     """, unsafe_allow_html=True)
 
-    # Main recipe input box
-    user_pantry = st.text_input(
-        "🍳 What ingredients are on your kitchen counter?",
-        value=pantry_input,
-        placeholder="e.g. paneer, spinach, garlic, onion, butter",
-        key="main_tab_pantry_input"
-    )
-
-    if user_pantry:
-        input_ingredients = [s.strip().lower() for s in user_pantry.split(",") if s.strip()]
+    if pantry_input:
+        input_ingredients = [s.strip().lower() for s in pantry_input.split(",") if s.strip()]
         
         # Tags display
         st.markdown(f"**Ingredients in your basket:** `{'`, `'.join(input_ingredients)}`")
@@ -1136,7 +1122,7 @@ with tab_ai:
             st.dataframe(display_df.reset_index(drop=True), use_container_width=True)
 
     else:
-        st.info("💡 Enter ingredients above (or click a quick button in the sidebar pantry) to awaken the AI sous-chef!")
+        st.info("💡 Enter ingredients in the Kitchen Pantry on the left (or click a quick button like 🍗 Chicken Curry or 🧀 Paneer Tikka) to awaken the AI sous-chef!")
 
 # -------------------------------------------------------------------
 # TAB 3: Chef's Tasting Journal (Ratings & Reviews)
