@@ -16,7 +16,6 @@ from sklearn.naive_bayes import MultinomialNB
 DATA_FOLDER = "data"
 FEEDBACK_FILE = "feedback.csv"
 
-# Greatly expanded heuristic nutrition database (per 100g approx)
 BASE_NUTRITION_DB: Dict[str, Dict[str, float]] = {
     # Meats / Protein
     "chicken": {"calories": 239, "protein": 27, "fat": 14, "carbs": 0},
@@ -95,7 +94,7 @@ def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
     df.columns = [col.strip().lower().replace(" ", "_") for col in df.columns]
     return df
 
-@st.cache_data(show_spinner="Opening the Chef's Recipe Book...")
+@st.cache_data(show_spinner="Opening the Antique Recipe Book...")
 def load_and_combine_datasets(file_paths: List[str]) -> pd.DataFrame:
     dfs = []
     required_columns = [
@@ -371,242 +370,229 @@ def append_feedback(feedback_file: str, selected_recipe: str, user_ingredients: 
     df.to_csv(feedback_file, index=False)
 
 # -------------------------------------------------------------------
-# Streamlit App Setup & Self-Contained Open Book Styling
+# Streamlit App Setup
 # -------------------------------------------------------------------
 st.set_page_config(
-    page_title="WannabeChef • The Cozy Recipe Book",
+    page_title="WannabeChef • Antique Recipe Book",
     page_icon="📖",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# Open Book CSS: Two-page spread with book cover border and spine crease
+# Antique Storybook CSS (Aged Parchment, Deckle Edges, Green Ribbons, Wooden Table)
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Patrick+Hand&family=Quicksand:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Patrick+Hand&family=Quicksand:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap');
 
     html, body, [class*="css"] {
         font-family: 'Quicksand', sans-serif;
     }
     
-    /* Cozy wooden kitchen countertop background */
+    /* Warm Rustic Kitchen Wood Table Background */
     .stApp {
-        background-color: #EDE4DC;
+        background-color: #B28352;
         background-image: 
-            radial-gradient(#DFD3C8 1px, transparent 1px),
-            linear-gradient(135deg, rgba(235, 222, 211, 0.5) 0%, rgba(220, 205, 192, 0.5) 100%);
-        background-size: 24px 24px, 100% 100%;
-        color: #38302E;
+            radial-gradient(ellipse at 50% 40%, rgba(255, 235, 200, 0.15) 0%, transparent 70%),
+            repeating-linear-gradient(90deg, rgba(70, 40, 20, 0.05) 0px, rgba(70, 40, 20, 0.05) 2px, transparent 2px, transparent 60px),
+            linear-gradient(180deg, #9C6F42 0%, #7E542D 100%);
+        color: #2F2119;
     }
 
-    /* Hide excess padding so entire book fits comfortably on screen without scrolling */
+    /* Keep main container locked on screen - NO SCROLLING */
     .block-container {
-        padding-top: 1.2rem !important;
-        padding-bottom: 1.2rem !important;
-        max-width: 1400px !important;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+        max-width: 1320px !important;
     }
 
-    /* Red Silk Bookmark Ribbon */
-    .book-ribbon {
-        position: relative;
-        margin: 0 auto -10px auto;
-        width: 240px;
-        background: #E63946;
-        color: #FFFFFF;
-        padding: 6px 14px 12px 14px;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 1.5px;
-        border-radius: 4px 4px 0 0;
-        clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-        z-index: 99;
-        text-align: center;
+    /* Hide Streamlit header/footer noise for immersion */
+    header[data-testid="stHeader"] {
+        background: transparent !important;
     }
 
-    /* The Main Open Book Spread: Hardcover Leather Outline with Inner Gold Bevel */
+    /* Top Book Title Ribbon Header */
+    .top-ribbon-bar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 6px;
+    }
+
+    .book-tab-pill {
+        background: #FDF4E7;
+        color: #6A412A;
+        font-family: 'Patrick Hand', cursive;
+        font-size: 16px;
+        padding: 4px 16px;
+        border-radius: 14px 14px 0 0;
+        border: 1px solid #C8AC8A;
+        border-bottom: none;
+        box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+        cursor: pointer;
+    }
+
+    /* THE OPEN ANTIQUE BOOK SPREAD */
     [data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlock"] > [data-testid="stHorizontalBlock"] {
-        background: #FFFDF9;
-        border: 4px solid #5C3024 !important;
-        outline: 10px solid #7A4232 !important;
-        outline-offset: 2px !important;
-        border-radius: 22px !important;
+        background: #F8EFE1 !important;
+        /* Stacked book page edges simulation on sides */
+        border: 4px solid #75442F !important;
+        border-left: 18px solid #C2A57E !important;
+        border-right: 18px solid #C2A57E !important;
+        outline: 6px solid #4D2619 !important;
+        border-radius: 20px !important;
         box-shadow: 
-            0 25px 60px rgba(50, 25, 18, 0.4),
-            0 8px 25px rgba(0, 0, 0, 0.25) !important;
+            0 25px 65px rgba(35, 18, 10, 0.6),
+            0 8px 25px rgba(0, 0, 0, 0.4) !important;
         padding: 0 !important;
-        margin-top: 8px !important;
+        margin-top: 4px !important;
         position: relative;
     }
 
-    /* Left Page Column */
+    /* Left Aged Parchment Page */
     [data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlock"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:first-child {
-        background-color: #FFFDF9;
-        background-image: linear-gradient(to right, #FFFDF9 92%, #F3EAE1 100%);
-        border-right: 2px solid #E2D3C4 !important;
-        border-radius: 18px 0 0 18px !important;
-        padding: 22px 26px !important;
-        height: 780px !important;
-        overflow-y: auto !important;
-        box-shadow: inset -15px 0 20px -10px rgba(80, 50, 35, 0.08);
+        background: #FBF4EA !important;
+        background-image: 
+            radial-gradient(circle at 10% 20%, #FFFDF7 0%, transparent 60%),
+            linear-gradient(to right, #FBF4EA 92%, #ECDDC7 100%) !important;
+        border-right: 2px solid #D6C2A5 !important;
+        border-radius: 14px 0 0 14px !important;
+        padding: 16px 22px !important;
+        height: 690px !important;
+        overflow: hidden !important;
+        box-shadow: inset -16px 0 22px -10px rgba(80, 50, 30, 0.16) !important;
     }
 
-    /* Right Page Column */
+    /* Right Aged Parchment Page */
     [data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlock"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]:last-child {
-        background-color: #FFFDF9;
-        background-image: linear-gradient(to left, #FFFDF9 92%, #F3EAE1 100%);
-        border-radius: 0 18px 18px 0 !important;
-        padding: 22px 26px !important;
-        height: 780px !important;
-        overflow-y: auto !important;
-        box-shadow: inset 15px 0 20px -10px rgba(80, 50, 35, 0.08);
+        background: #FBF4EA !important;
+        background-image: 
+            radial-gradient(circle at 90% 20%, #FFFDF7 0%, transparent 60%),
+            linear-gradient(to left, #FBF4EA 92%, #ECDDC7 100%) !important;
+        border-radius: 0 14px 14px 0 !important;
+        padding: 16px 22px !important;
+        height: 690px !important;
+        overflow: hidden !important;
+        box-shadow: inset 16px 0 22px -10px rgba(80, 50, 30, 0.16) !important;
     }
 
-    /* Scrollbars inside the book pages */
-    [data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlock"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]::-webkit-scrollbar {
-        width: 6px;
-    }
-    [data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlock"] > [data-testid="stHorizontalBlock"] > [data-testid="column"]::-webkit-scrollbar-thumb {
-        background: #D9C3B0;
-        border-radius: 10px;
-    }
-
-    /* Book Page Header Banner */
-    .page-header-stamp {
+    /* Page Headings and Vintage Typography */
+    .antique-page-header {
         font-family: 'Patrick Hand', cursive;
         font-size: 15px;
-        color: #9C7A68;
+        color: #8C6A53;
         letter-spacing: 2px;
         text-transform: uppercase;
-        border-bottom: 1px dashed #E2D3C4;
-        padding-bottom: 6px;
-        margin-bottom: 12px;
+        border-bottom: 1px dashed #DCC7AD;
+        padding-bottom: 4px;
+        margin-bottom: 10px;
         display: flex;
         justify-content: space-between;
     }
 
-    /* Cute Washi Tape */
+    .antique-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #38241B;
+        line-height: 1.2;
+    }
+
+    /* Cute Washi Tape Strip */
     .washi-tape-strip {
-        width: 120px;
-        height: 22px;
-        background: rgba(255, 182, 193, 0.75);
-        margin: -8px auto 10px auto;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        width: 110px;
+        height: 20px;
+        background: rgba(255, 182, 193, 0.7);
+        margin: -6px auto 8px auto;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.06);
         transform: rotate(-1.5deg);
         border-left: 3px dashed rgba(255,255,255,0.7);
         border-right: 3px dashed rgba(255,255,255,0.7);
     }
 
-    /* Index entry cards */
-    .index-entry-card {
+    /* Index Card Rows */
+    .index-entry-row {
         background: #FFFFFF;
-        border: 1px solid #F0E5DC;
-        border-radius: 12px;
-        padding: 9px 12px;
-        margin-bottom: 8px;
+        border: 1px solid #EAD8C3;
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin-bottom: 6px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         transition: all 0.2s ease;
     }
-    .index-entry-card:hover {
-        border-color: #E07A5F;
-        transform: translateX(3px);
-        box-shadow: 0 3px 10px rgba(180, 140, 120, 0.12);
-    }
-    .index-name-text {
-        font-weight: 600;
-        font-size: 14px;
-        color: #38302E;
-    }
-    .index-meta-text {
-        font-size: 12px;
-        color: #8C7565;
-        background: #FAF3EC;
-        padding: 2px 8px;
-        border-radius: 10px;
+    .index-entry-row:hover {
+        border-color: #D95D39;
+        background: #FFFDF9;
+        transform: translateX(2px);
     }
 
-    /* Health & Nutrition Wax Seal */
+    /* Health & Nutrition Stamp */
     .health-stamp-seal {
         display: inline-block;
-        border: 2px dashed #E07A5F;
-        background: #FFF5F0;
-        color: #C85A3F;
+        border: 1.5px dashed #D95D39;
+        background: #FFF5EE;
+        color: #B54728;
+        font-family: 'Patrick Hand', cursive;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 14px;
+    }
+
+    /* Step Cards inside Right Page */
+    .step-card {
+        background: #FFFDF9;
+        border-left: 3px solid #D95D39;
+        padding: 6px 10px;
+        margin-bottom: 6px;
+        border-radius: 0 8px 8px 0;
+        font-size: 13px;
+        line-height: 1.35;
+        color: #38261D;
+        border-top: 1px solid #F5EAE0;
+        border-bottom: 1px solid #F5EAE0;
+        border-right: 1px solid #F5EAE0;
+    }
+
+    /* Page Navigation Flipper Bar */
+    .page-flipper-bar {
+        position: absolute;
+        bottom: 8px;
+        left: 20px;
+        right: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px dashed #D9C3A8;
+        padding-top: 6px;
         font-family: 'Patrick Hand', cursive;
         font-size: 15px;
-        font-weight: 700;
-        padding: 3px 12px;
-        border-radius: 20px;
-        margin: 4px 0;
+        color: #7A5B45;
     }
 
-    /* Basket checklist cards */
-    .basket-box-have {
-        background-color: #F0FDF4;
-        border: 1px solid #BBF7D0;
-        border-radius: 10px;
-        padding: 8px 12px;
-        margin-bottom: 6px;
-    }
-    .basket-box-need {
-        background-color: #FFF7ED;
-        border: 1px solid #FED7AA;
-        border-radius: 10px;
-        padding: 8px 12px;
-        margin-bottom: 6px;
-    }
-
-    /* Buttons styling */
+    /* Buttons */
     .stButton>button {
-        border-radius: 18px !important;
-        border: 1.5px solid #E07A5F !important;
-        color: #E07A5F !important;
+        border-radius: 16px !important;
+        border: 1.5px solid #D95D39 !important;
+        color: #D95D39 !important;
         background-color: #FFFFFF !important;
         font-family: 'Quicksand', sans-serif !important;
         font-weight: 600 !important;
-        padding: 3px 12px !important;
-        font-size: 13px !important;
-        transition: all 0.2s ease !important;
+        padding: 2px 10px !important;
+        font-size: 12px !important;
     }
     .stButton>button:hover {
-        border-color: #D95D39 !important;
+        border-color: #B54728 !important;
         color: #FFFFFF !important;
         background-color: #D95D39 !important;
-        transform: scale(1.02);
-    }
-    .stButton>button[kind="primary"] {
-        background-color: #D95D39 !important;
-        color: #FFFFFF !important;
-        border: 1.5px solid #D95D39 !important;
     }
 
-    /* Metric values */
+    /* Metric numbers */
     [data-testid="stMetricValue"] {
         font-family: 'Playfair Display', serif !important;
         color: #D95D39 !important;
-        font-size: 19px !important;
-    }
-
-    /* Custom tabs for Left Page */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 6px;
-        background-color: #F7EEE5;
-        padding: 4px 6px;
-        border-radius: 12px;
-    }
-    .stTabs [data-baseweb="tab"] {
-        font-family: 'Patrick Hand', cursive !important;
-        font-size: 16px !important;
-        font-weight: 600 !important;
-        border-radius: 8px !important;
-        padding: 5px 12px !important;
-        color: #6B5B52 !important;
-    }
-    .stTabs [aria-selected="true"] {
-        background-color: #FFFFFF !important;
-        color: #D95D39 !important;
-        box-shadow: 0 2px 6px rgba(180, 140, 120, 0.15) !important;
+        font-size: 17px !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -627,143 +613,238 @@ course_model, course_vectorizer = train_text_classifier(df, 'course')
 feedback_summary = load_feedback_summary(FEEDBACK_FILE)
 
 # -------------------------------------------------------------------
-# State Management
+# Book State Management (Page Flipping)
 # -------------------------------------------------------------------
+if "book_mode" not in st.session_state:
+    st.session_state["book_mode"] = "recipe" # 'recipe' or 'index' or 'pantry'
+
 if "active_recipe_index" not in st.session_state:
     st.session_state["active_recipe_index"] = 0
+
+if "step_page" not in st.session_state:
+    st.session_state["step_page"] = 0
+
+if "chapter_page" not in st.session_state:
+    st.session_state["chapter_page"] = 0
+
+if "selected_chapter" not in st.session_state:
+    st.session_state["selected_chapter"] = "North Indian Recipes"
 
 if "pantry_ingredients" not in st.session_state:
     st.session_state["pantry_ingredients"] = ""
 
-def set_pantry_preset(preset: str):
-    st.session_state["pantry_ingredients"] = preset
+def set_book_mode(mode: str):
+    st.session_state["book_mode"] = mode
+    st.session_state["step_page"] = 0
 
 def select_recipe(idx: int):
     st.session_state["active_recipe_index"] = idx
+    st.session_state["book_mode"] = "recipe"
+    st.session_state["step_page"] = 0
+
+def prev_recipe():
+    cur = st.session_state["active_recipe_index"]
+    st.session_state["active_recipe_index"] = max(0, cur - 1)
+    st.session_state["step_page"] = 0
+
+def next_recipe():
+    cur = st.session_state["active_recipe_index"]
+    st.session_state["active_recipe_index"] = min(len(df) - 1, cur + 1)
+    st.session_state["step_page"] = 0
+
+def prev_steps():
+    st.session_state["step_page"] = max(0, st.session_state["step_page"] - 1)
+
+def next_steps(max_p):
+    st.session_state["step_page"] = min(max_p, st.session_state["step_page"] + 1)
+
+def prev_chapter_page():
+    st.session_state["chapter_page"] = max(0, st.session_state["chapter_page"] - 1)
+
+def next_chapter_page(max_p):
+    st.session_state["chapter_page"] = min(max_p, st.session_state["chapter_page"] + 1)
+
+def set_pantry_preset(preset: str):
+    st.session_state["pantry_ingredients"] = preset
 
 # -------------------------------------------------------------------
-# Open Recipe Book Header & Bookmark Ribbon
+# Top Ribbon Bookmark Tabs (Quick Page Flipper)
 # -------------------------------------------------------------------
-st.markdown("""
-<div class="book-ribbon">WANNABECHEF • RECIPE JOURNAL</div>
-<div style="text-align: center; margin-bottom: 6px;">
-    <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #7A3E2D; margin: 0; display: inline-flex; align-items: center; gap: 8px;">
-        <span>📖</span> WannabeChef <span>🍳</span>
-    </h1>
-    <span style="font-family: 'Patrick Hand', cursive; font-size: 18px; color: #8D6B58; margin-left: 10px;">
-        ~ A Cozy Handcrafted Storybook of Recipes & AI Kitchen Intuition ~
-    </span>
-</div>
-""", unsafe_allow_html=True)
-
-# Main Two-Page Spread Columns
-col_left_page, col_right_page = st.columns([1, 1.1], gap="small")
-
-# ===================================================================
-# LEFT PAGE: Chapters, Index & AI Pantry
-# ===================================================================
-with col_left_page:
+col_t1, col_t2, col_t3 = st.columns([1, 1.8, 1])
+with col_t2:
     st.markdown("""
-    <div class="page-header-stamp">
-        <span>📑 TABLE OF CONTENTS & CHAPTERS</span>
-        <span>PAGE I</span>
+    <div style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+        <span style="font-size: 24px;">🎀</span>
+        <span style="font-family: 'Playfair Display', serif; font-size: 26px; color: #FFF2DF; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+            WannabeChef • Antique Recipe Book
+        </span>
+        <span style="font-size: 24px;">🎀</span>
     </div>
     """, unsafe_allow_html=True)
+    
+    b_tabs = st.columns(3)
+    with b_tabs[0]:
+        st.button("📑 Table of Contents", on_click=set_book_mode, args=("index",), use_container_width=True)
+    with b_tabs[1]:
+        st.button("📖 Current Recipe", on_click=set_book_mode, args=("recipe",), use_container_width=True)
+    with b_tabs[2]:
+        st.button("🪄 AI Pantry Finder", on_click=set_book_mode, args=("pantry",), use_container_width=True)
 
-    left_tab_chapters, left_tab_pantry, left_tab_journal = st.tabs([
-        "📖 Chapters Index",
-        "🧺 AI Pantry",
-        "⭐ Tasting Log"
-    ])
+# -------------------------------------------------------------------
+# Active Recipe Data
+# -------------------------------------------------------------------
+active_idx = st.session_state.get("active_recipe_index", 0)
+if active_idx in df.index:
+    active_row = df.loc[active_idx]
+else:
+    active_row = df.iloc[0]
 
-    # ---------------------------------------------------------------
-    # Tab A: Chapter & Index Browser
-    # ---------------------------------------------------------------
-    with left_tab_chapters:
+recipename = active_row['recipename']
+cuisine = str(active_row.get('cuisine', 'Specialty')).title()
+course = str(active_row.get('course', 'Dish')).title()
+total_time = active_row.get('totaltimeinmins')
+servings = active_row.get('servings')
+recipe_url = active_row.get('url')
+img_url = active_row.get('image_url')
+rec_ings_str = active_row.get('ingredients', '')
+instructions = active_row.get('instructions')
+
+rec_ings = [i.strip() for i in str(rec_ings_str).split(",") if i.strip()] if rec_ings_str and pd.notna(rec_ings_str) else []
+nutrition = estimate_nutrition_from_ingredients(rec_ings, servings)
+health_seal = healthiness_label(nutrition)
+theme = CUISINE_THEMES.get(active_row.get('cuisine', ''), {"emoji": "🍲", "subtitle": "A cozy culinary creation"})
+
+# ===================================================================
+# THE TWO-PAGE OPEN BOOK SPREAD
+# ===================================================================
+page_col_left, page_col_right = st.columns([1, 1], gap="small")
+
+current_mode = st.session_state.get("book_mode", "recipe")
+
+# -------------------------------------------------------------------
+# VIEW 1: TABLE OF CONTENTS (INDEX & CHAPTERS)
+# -------------------------------------------------------------------
+if current_mode == "index":
+    with page_col_left:
+        st.markdown("""
+        <div class="antique-page-header">
+            <span>📑 CHAPTER DIRECTORY</span>
+            <span>INDEX • LEFT</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<h3 class='antique-title' style='font-size:22px; margin-bottom:4px;'>Chapters & Cuisines</h3>", unsafe_allow_html=True)
         unique_cuisines = sorted([c for c in df["cuisine"].dropna().unique() if c != 'unknown'])
         
-        c_sel1, c_sel2 = st.columns([1.3, 1])
-        with c_sel1:
-            browse_cuisine = st.selectbox("Select Chapter / Cuisine:", options=["All Chapters"] + unique_cuisines, index=0)
-        with c_sel2:
-            search_title = st.text_input("🔍 Search title:", placeholder="e.g. Tikka, Biryani")
+        sel_c = st.selectbox("Turn to Chapter:", options=unique_cuisines, index=unique_cuisines.index(st.session_state["selected_chapter"]) if st.session_state["selected_chapter"] in unique_cuisines else 0)
+        st.session_state["selected_chapter"] = sel_c
 
-        filtered_chapter_df = df.copy()
-        if browse_cuisine != "All Chapters":
-            filtered_chapter_df = filtered_chapter_df[filtered_chapter_df['cuisine'] == browse_cuisine]
-        if search_title:
-            filtered_chapter_df = filtered_chapter_df[filtered_chapter_df['recipename'].str.contains(search_title, case=False, na=False)]
+        c_theme = CUISINE_THEMES.get(sel_c, {"emoji": "🍲", "subtitle": "Traditional family specialties"})
+        chapter_recipes = df[df['cuisine'] == sel_c]
 
-        theme = CUISINE_THEMES.get(browse_cuisine, {"emoji": "🍲", "subtitle": "Curated dishes and homemade specialties"})
-        
         st.markdown(f"""
-        <div style="font-family: 'Patrick Hand', cursive; font-size: 15px; color: #8D6B58; margin-bottom: 6px;">
-            {theme['emoji']} <strong>{browse_cuisine}</strong>: {theme['subtitle']} ({len(filtered_chapter_df):,} dishes)
+        <div style="background:#FFF9F0; border:1px dashed #D6C2A5; border-radius:10px; padding:10px 14px; margin:10px 0;">
+            <div style="font-size:24px; margin-bottom:2px;">{c_theme['emoji']}</div>
+            <strong style="color:#7A4232; font-size:16px;">{sel_c}</strong>
+            <p style="font-family:'Patrick Hand', cursive; font-size:14px; color:#8C6A53; margin:2px 0 0 0;">
+                {c_theme['subtitle']} • <strong>{len(chapter_recipes):,} recipes</strong>
+            </p>
         </div>
         """, unsafe_allow_html=True)
 
-        if filtered_chapter_df.empty:
-            st.warning("No recipes found in this chapter with that title search!")
+        search_term = st.text_input("🔍 Search recipe in this chapter:", placeholder="e.g. Paneer, Chicken, Soup")
+        if search_term:
+            chapter_recipes = chapter_recipes[chapter_recipes['recipename'].str.contains(search_term, case=False, na=False)]
+
+        st.caption("👈 Select any recipe on the right page to turn directly to its recipe card!")
+
+    with page_col_right:
+        st.markdown("""
+        <div class="antique-page-header">
+            <span>📖 RECIPES IN CHAPTER</span>
+            <span>INDEX • RIGHT</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if chapter_recipes.empty:
+            st.warning("No recipes found matching this search in this chapter.")
         else:
-            # Pagination
-            items_per_page = 7
-            total_p = max(1, int(np.ceil(len(filtered_chapter_df) / items_per_page)))
-            p_col1, p_col2 = st.columns([1, 2])
-            with p_col1:
-                cur_page = st.number_input("Index Page:", min_value=1, max_value=total_p, value=1, step=1, key="idx_page_num")
-            with p_col2:
-                st.caption(f"Showing {(cur_page-1)*items_per_page + 1} - {min(cur_page*items_per_page, len(filtered_chapter_df))} of {len(filtered_chapter_df):,}")
+            per_page = 5
+            total_pages = max(1, int(np.ceil(len(chapter_recipes) / per_page)))
+            cur_p = min(st.session_state.get("chapter_page", 0), total_pages - 1)
+            
+            p_slice = chapter_recipes.iloc[cur_p * per_page : (cur_p + 1) * per_page]
 
-            start_i = (cur_page - 1) * items_per_page
-            p_slice = filtered_chapter_df.iloc[start_i:start_i+items_per_page]
+            st.markdown(f"<div style='font-family:Playfair Display, serif; font-size:16px; margin-bottom:8px; color:#5A3626;'>Chapter Index (Page {cur_p + 1} of {total_pages})</div>", unsafe_allow_html=True)
 
-            for _, row in p_slice.iterrows():
-                r_time = f"⏱️ {int(row['totaltimeinmins'])}m" if pd.notna(row['totaltimeinmins']) and row['totaltimeinmins'] > 0 else "⏱️ Flexible"
-                r_course = f"• {row['course'].title()}" if pd.notna(row['course']) and row['course'] != 'unknown' else ""
-
-                entry_col, btn_col = st.columns([3.2, 1])
-                with entry_col:
+            for _, r in p_slice.iterrows():
+                t_str = f"⏱️ {int(r['totaltimeinmins'])}m" if pd.notna(r['totaltimeinmins']) and r['totaltimeinmins'] > 0 else "⏱️ Flexible"
+                c_row1, c_row2 = st.columns([3.2, 1])
+                with c_row1:
                     st.markdown(f"""
-                    <div class="index-entry-card">
-                        <span class="index-name-text">✨ {row['recipename']}</span>
-                        <span class="index-meta-text">{r_time} {r_course}</span>
+                    <div class="index-entry-row">
+                        <span style="font-weight:600; font-size:13px; color:#38241B;">✨ {r['recipename'][:35]}</span>
+                        <span style="font-size:11px; color:#8C6A53; background:#F5EDE3; padding:2px 6px; border-radius:8px;">{t_str}</span>
                     </div>
                     """, unsafe_allow_html=True)
-                with btn_col:
-                    st.button("📖 Read", key=f"btn_c_{row.name}", on_click=select_recipe, args=(row.name,), use_container_width=True)
+                with c_row2:
+                    st.button("📖 Read", key=f"toc_read_{r.name}", on_click=select_recipe, args=(r.name,), use_container_width=True)
 
-    # ---------------------------------------------------------------
-    # Tab B: AI Pantry Finder
-    # ---------------------------------------------------------------
-    with left_tab_pantry:
+            st.markdown("---")
+            # Flipper controls
+            f1, f2, f3 = st.columns([1, 1.5, 1])
+            with f1:
+                st.button("◀ Prev Index", on_click=prev_chapter_page, disabled=(cur_p == 0), use_container_width=True)
+            with f2:
+                st.caption(f"<div style='text-align:center;'>Showing {cur_p*per_page + 1} - {min((cur_p+1)*per_page, len(chapter_recipes))}</div>", unsafe_allow_html=True)
+            with f3:
+                st.button("Next Index ▶", on_click=next_chapter_page, args=(total_pages - 1,), disabled=(cur_p >= total_pages - 1), use_container_width=True)
+
+# -------------------------------------------------------------------
+# VIEW 2: AI PANTRY FINDER
+# -------------------------------------------------------------------
+elif current_mode == "pantry":
+    with page_col_left:
         st.markdown("""
-        <div style="font-family: 'Patrick Hand', cursive; font-size: 16px; color: #8D6B58; margin-bottom: 6px;">
-            🧺 Tell the AI sous-chef what ingredients you have:
+        <div class="antique-page-header">
+            <span>🧺 CHEF'S PANTRY COUNTER</span>
+            <span>PANTRY • LEFT</span>
         </div>
         """, unsafe_allow_html=True)
 
-        st.caption("✨ Quick pantry ideas:")
-        preset_cols = st.columns(4)
-        preset_cols[0].button("🍗 Chicken", on_click=set_pantry_preset, args=("chicken, onion, tomato, garlic",), use_container_width=True)
-        preset_cols[1].button("🧀 Paneer", on_click=set_pantry_preset, args=("paneer, yogurt, onion, bell pepper",), use_container_width=True)
-        preset_cols[2].button("🍝 Pasta", on_click=set_pantry_preset, args=("pasta, olive oil, garlic, chilli, cheese",), use_container_width=True)
-        preset_cols[3].button("🥗 Salad", on_click=set_pantry_preset, args=("lettuce, tomato, cucumber, olive oil",), use_container_width=True)
+        st.markdown("<h3 class='antique-title' style='font-size:20px; margin-bottom:4px;'>What ingredients do you have?</h3>", unsafe_allow_html=True)
+        
+        st.caption("✨ Quick pantry inspirations:")
+        p_row1 = st.columns(2)
+        p_row1[0].button("🍗 Chicken Curry", on_click=set_pantry_preset, args=("chicken, onion, tomato, garlic",), use_container_width=True)
+        p_row1[1].button("🧀 Paneer Tikka", on_click=set_pantry_preset, args=("paneer, yogurt, onion, bell pepper",), use_container_width=True)
+        p_row2 = st.columns(2)
+        p_row2[0].button("🍝 Garlic Pasta", on_click=set_pantry_preset, args=("pasta, olive oil, garlic, chilli",), use_container_width=True)
+        p_row2[1].button("🥗 Fresh Salad", on_click=set_pantry_preset, args=("lettuce, tomato, cucumber, olive oil",), use_container_width=True)
 
         user_ingredients_input = st.text_input(
-            "Pantry ingredients:",
+            "Enter ingredients (comma-separated):",
             value=st.session_state.get("pantry_ingredients", ""),
-            placeholder="e.g. chicken, tomato, onion, garlic",
-            key="pantry_input_field"
+            placeholder="e.g. chicken, tomato, garlic, onion",
+            key="pantry_text_field"
         )
         if user_ingredients_input != st.session_state.get("pantry_ingredients", ""):
             st.session_state["pantry_ingredients"] = user_ingredients_input
 
-        # Filters
-        f_col1, f_col2 = st.columns(2)
-        with f_col1:
-            pantry_cuisine = st.selectbox("Filter Cuisine:", ["All Chapters"] + unique_cuisines, key="ai_c_filter")
-        with f_col2:
-            pantry_time = st.selectbox("Max Time:", ["Any Time", "< 30 mins", "< 60 mins", "< 90 mins"], key="ai_t_filter")
+        unique_cuisines = sorted([c for c in df["cuisine"].dropna().unique() if c != 'unknown'])
+        pf_col1, pf_col2 = st.columns(2)
+        with pf_col1:
+            p_c_filter = st.selectbox("Cuisine:", ["All Chapters"] + unique_cuisines, key="ai_c_box")
+        with pf_col2:
+            p_t_filter = st.selectbox("Max Time:", ["Any Time", "< 30 mins", "< 60 mins"], key="ai_t_box")
+
+    with page_col_right:
+        st.markdown("""
+        <div class="antique-page-header">
+            <span>🎯 MATCHED CREATIONS</span>
+            <span>PANTRY • RIGHT</span>
+        </div>
+        """, unsafe_allow_html=True)
 
         if user_ingredients_input:
             input_ings = [s.strip().lower() for s in user_ingredients_input.split(",") if s.strip()]
@@ -771,219 +852,170 @@ with col_left_page:
             pred_co = predict_text_label((course_model, course_vectorizer), input_ings)
 
             st.markdown(f"""
-            <div style="background: #FFFBF5; border: 1.5px dashed #E07A5F; border-radius: 12px; padding: 8px 12px; margin: 8px 0; font-size: 13px;">
-                🧑‍🍳 <strong>AI Intuition:</strong> Looks like a <strong>{pred_c.title()} {pred_co.title()}</strong> dish!
+            <div style="background:#FFF9F0; border:1px dashed #D95D39; border-radius:8px; padding:6px 10px; font-size:12px; margin-bottom:8px;">
+                🧑‍🍳 <strong>AI Intuition:</strong> Authentic <strong>{pred_c.title()} {pred_co.title()}</strong> style!
             </div>
             """, unsafe_allow_html=True)
 
             scored = compute_intelligence_scores(
-                df,
-                tfidf_vectorizer,
-                tfidf_matrix,
-                input_ings,
-                pred_c,
-                pred_co,
-                pantry_cuisine,
-                feedback_summary
+                df, tfidf_vectorizer, tfidf_matrix, input_ings, pred_c, pred_co, p_c_filter, feedback_summary
             )
-
-            if pantry_cuisine != "All Chapters":
-                scored = scored[scored['cuisine'].str.lower() == pantry_cuisine.lower()]
-            if pantry_time != "Any Time":
-                max_t = int(re.sub(r'\D', '', pantry_time))
+            if p_c_filter != "All Chapters":
+                scored = scored[scored['cuisine'].str.lower() == p_c_filter.lower()]
+            if p_t_filter != "Any Time":
+                max_t = int(re.sub(r'\D', '', p_t_filter))
                 scored = scored[(scored['totaltimeinmins'] > 0) & (scored['totaltimeinmins'] <= max_t)]
 
-            top_ai_results = scored.sort_values(by='intelligence_score', ascending=False).head(8)
+            top_pantry = scored.sort_values(by='intelligence_score', ascending=False).head(5)
 
-            if top_ai_results.empty:
-                st.warning("No recipes matched these filters!")
+            if top_pantry.empty:
+                st.warning("No recipes match these exact filters.")
             else:
-                st.markdown("##### 🎯 Top AI Recommendations:")
-                for _, a_row in top_ai_results.iterrows():
-                    match_pct = f"{a_row['fuzzy_score']:.0f}% match"
-                    col_ai_info, col_ai_btn = st.columns([3.2, 1])
-                    with col_ai_info:
+                for _, pr in top_pantry.iterrows():
+                    match_badge = f"{pr['fuzzy_score']:.0f}% match"
+                    col_p1, col_p2 = st.columns([3.2, 1])
+                    with col_p1:
                         st.markdown(f"""
-                        <div class="index-entry-card">
-                            <span class="index-name-text">✨ {a_row['recipename']}</span>
-                            <span class="index-meta-text">{match_pct} • {a_row['cuisine'].title()}</span>
+                        <div class="index-entry-row">
+                            <span style="font-weight:600; font-size:13px; color:#38241B;">✨ {pr['recipename'][:35]}</span>
+                            <span style="font-size:11px; color:#8C6A53; background:#F5EDE3; padding:2px 6px; border-radius:8px;">{match_badge}</span>
                         </div>
                         """, unsafe_allow_html=True)
-                    with col_ai_btn:
-                        st.button("📖 Read", key=f"btn_ai_{a_row.name}", on_click=select_recipe, args=(a_row.name,), use_container_width=True)
+                    with col_p2:
+                        st.button("📖 Read", key=f"pan_read_{pr.name}", on_click=select_recipe, args=(pr.name,), use_container_width=True)
         else:
-            st.info("💡 Type ingredients above or tap one of the quick chips to see AI recipe matches!")
+            st.info("💡 Type ingredients on the left page or tap a quick idea to see recommendations here!")
 
-    # ---------------------------------------------------------------
-    # Tab C: Chef's Tasting Log
-    # ---------------------------------------------------------------
-    with left_tab_journal:
-        if os.path.exists(FEEDBACK_FILE):
-            try:
-                fdf = pd.read_csv(FEEDBACK_FILE)
-                if not fdf.empty:
-                    st.caption(f"⭐ **{len(fdf)} dishes tasted & rated** • Avg score: **{fdf['rating'].mean():.1f} / 5**")
-                    for _, j_row in fdf.tail(6).iloc[::-1].iterrows():
-                        stars = "⭐" * int(j_row.get('rating', 5))
-                        st.markdown(f"""
-                        <div class="index-entry-card">
-                            <div>
-                                <span class="index-name-text">{j_row.get('selected_recipe')}</span>
-                                <div style="font-size: 11px; color: #8C7565;">{j_row.get('timestamp', 'Recent')}</div>
-                            </div>
-                            <span>{stars}</span>
-                        </div>
-                        """, unsafe_allow_html=True)
-                else:
-                    st.info("No tastings logged yet! Rate a recipe on the right page.")
-            except Exception:
-                st.info("Tasting log is ready for your first rating!")
-        else:
-            st.info("No tastings logged yet! Cook a dish and leave a star rating on the right page.")
-
-# ===================================================================
-# RIGHT PAGE: Active Recipe Page (Storybook View)
-# ===================================================================
-with col_right_page:
-    active_idx = st.session_state.get("active_recipe_index", 0)
-    if active_idx in df.index:
-        active_row = df.loc[active_idx]
-    else:
-        active_row = df.iloc[0]
-
-    recipename = active_row['recipename']
-    cuisine = str(active_row.get('cuisine', 'Specialty')).title()
-    course = str(active_row.get('course', 'Dish')).title()
-    total_time = active_row.get('totaltimeinmins')
-    servings = active_row.get('servings')
-    recipe_url = active_row.get('url')
-    img_url = active_row.get('image_url')
-    rec_ings_str = active_row.get('ingredients', '')
-    instructions = active_row.get('instructions')
-
-    rec_ings = [i.strip() for i in str(rec_ings_str).split(",") if i.strip()] if rec_ings_str and pd.notna(rec_ings_str) else []
-    nutrition = estimate_nutrition_from_ingredients(rec_ings, servings)
-    health_seal = healthiness_label(nutrition)
-    theme = CUISINE_THEMES.get(active_row.get('cuisine', ''), {"emoji": "🍲", "subtitle": "A cozy culinary creation"})
-
-    # Right Page Header
-    st.markdown(f"""
-    <div class="page-header-stamp">
-        <span>📖 CHEF'S RECIPE SPREAD</span>
-        <span>RECIPE #{active_row.get('srno') or '★'}</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # Washi Tape & Title
-    st.markdown(f"""
-    <div style="text-align: center;">
-        <div class="washi-tape-strip"></div>
-        <div style="font-family: 'Patrick Hand', cursive; color: #D95D39; font-size: 15px; font-weight: 700; margin-bottom: 2px;">
-            {theme['emoji']} CHAPTER: {cuisine.upper()} • {course.upper()}
+# -------------------------------------------------------------------
+# VIEW 3: ACTIVE RECIPE (TWO-PAGE SPREAD - NO SCROLLING, STEP FLIPPING)
+# -------------------------------------------------------------------
+else:
+    # LEFT PAGE: Recipe Story, Photo & Ingredients
+    with page_col_left:
+        st.markdown(f"""
+        <div class="antique-page-header">
+            <span>📖 RECIPE OVERVIEW</span>
+            <span>CHAPTER {cuisine.upper()}</span>
         </div>
-        <h2 style="font-family: 'Playfair Display', serif; font-size: 26px; color: #38302E; margin: 0 0 6px 0;">{recipename}</h2>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    # Image + Key Info
-    col_img, col_metrics = st.columns([1, 1.2])
-    with col_img:
-        if img_url and pd.notna(img_url) and str(img_url).strip() and str(img_url).startswith("http"):
-            st.image(img_url, use_column_width=True)
-        else:
-            st.image("https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=500&q=80", use_column_width=True)
-
-        if recipe_url and pd.notna(recipe_url) and str(recipe_url).startswith("http"):
-            st.markdown(f"""
-            <div style="text-align: center; margin-top: 4px;">
-                <a href="{recipe_url}" target="_blank" style="font-family: 'Patrick Hand', cursive; font-size: 14px; color: #D95D39; text-decoration: none; font-weight: 700;">
-                    🔗 Original Recipe Link ↗
-                </a>
+        st.markdown("<div class='washi-tape-strip'></div>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div style="text-align:center; margin-bottom:8px;">
+            <h2 class="antique-title" style="font-size:22px; margin:0 0 2px 0;">{recipename}</h2>
+            <div style="font-family:'Patrick Hand', cursive; font-size:14px; color:#8C6A53;">
+                {theme['emoji']} {cuisine} • {course}
             </div>
-            """, unsafe_allow_html=True)
+        </div>
+        """, unsafe_allow_html=True)
 
-    with col_metrics:
-        t_disp = f"{int(total_time)} min" if pd.notna(total_time) and total_time > 0 else "Flexible"
-        s_disp = f"{int(servings)}" if pd.notna(servings) and servings > 0 else "2-4"
+        c_img, c_metrics = st.columns([1, 1.2])
+        with c_img:
+            if img_url and pd.notna(img_url) and str(img_url).strip() and str(img_url).startswith("http"):
+                st.image(img_url, use_column_width=True)
+            else:
+                st.image("https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=400&q=80", use_column_width=True)
 
-        m_c1, m_c2 = st.columns(2)
-        m_c1.metric("Cooking Time", t_disp)
-        m_c2.metric("Servings", s_disp)
+        with c_metrics:
+            t_disp = f"{int(total_time)}m" if pd.notna(total_time) and total_time > 0 else "Flexible"
+            s_disp = f"{int(servings)}" if pd.notna(servings) and servings > 0 else "2-4"
 
-        st.markdown(f'<div class="health-stamp-seal">Seal: {health_seal}</div>', unsafe_allow_html=True)
+            m1, m2 = st.columns(2)
+            m1.metric("Time", t_disp)
+            m2.metric("Serves", s_disp)
+            st.markdown(f'<div class="health-stamp-seal">Seal: {health_seal}</div>', unsafe_allow_html=True)
+            st.markdown(f"<span style='font-size:11px; color:#8C6A53;'>🍎 Calories: <strong>{nutrition.get('calories', 0):.0f} kcal</strong> • Protein: <strong>{nutrition.get('protein', 0):.1f}g</strong></span>", unsafe_allow_html=True)
 
-        st.markdown("##### 🍎 Nutrition (per serving approx):")
-        n_c1, n_c2 = st.columns(2)
-        n_c1.metric("Calories", f"{nutrition.get('calories', 0):.0f} kcal")
-        n_c2.metric("Protein", f"{nutrition.get('protein', 0):.1f} g")
-        n_c1.metric("Fats", f"{nutrition.get('fat', 0):.1f} g")
-        n_c2.metric("Carbs", f"{nutrition.get('carbs', 0):.1f} g")
-
-    # Basket Checklist if user entered ingredients in Pantry
-    pantry_current = st.session_state.get("pantry_ingredients", "").strip()
-    if pantry_current and rec_ings_str:
-        user_list = [s.strip().lower() for s in pantry_current.split(",") if s.strip()]
-        details = get_ingredient_match_details(rec_ings_str, user_list)
-        
-        b_c1, b_c2 = st.columns(2)
-        with b_c1:
-            have_txt = ", ".join(details['matched'][:5]) if details['matched'] else "None yet"
-            st.markdown(f"""
-            <div class="basket-box-have">
-                <strong style="color: #166534; font-size: 13px;">🧺 In Basket ({len(details['matched'])}):</strong><br>
-                <span style="font-size: 12px; color: #14532D;">{have_txt}</span>
-            </div>
-            """, unsafe_allow_html=True)
-        with b_c2:
-            need_txt = ", ".join(details['missing'][:5]) if details['missing'] else "All ready!"
-            st.markdown(f"""
-            <div class="basket-box-need">
-                <strong style="color: #9A3412; font-size: 13px;">🛒 Market List ({len(details['missing'])}):</strong><br>
-                <span style="font-size: 12px; color: #7C2D12;">{need_txt}</span>
-            </div>
-            """, unsafe_allow_html=True)
-
-    # Full Ingredients Accordion
-    with st.expander("🧂 Full Ingredients", expanded=False):
-        if rec_ings_str and pd.notna(rec_ings_str):
-            clean_ings = [i.strip().title() for i in rec_ings_str.split(",") if i.strip()]
-            ing_col1, ing_col2 = st.columns(2)
-            for idx, item in enumerate(clean_ings):
-                col = ing_col1 if idx % 2 == 0 else ing_col2
-                col.markdown(f"• {item}")
+        # Ingredients (Compact 2-column list)
+        st.markdown("<div style='font-family:Patrick Hand, cursive; font-size:16px; font-weight:700; color:#5A3626; margin:8px 0 4px 0;'>🧂 Key Ingredients:</div>", unsafe_allow_html=True)
+        if rec_ings:
+            ing_cols = st.columns(2)
+            for idx, ing_item in enumerate(rec_ings[:8]):
+                target_col = ing_cols[idx % 2]
+                target_col.markdown(f"<span style='font-size:12px; color:#38241B;'>• {ing_item.title()[:24]}</span>", unsafe_allow_html=True)
+            if len(rec_ings) > 8:
+                st.caption(f"...and {len(rec_ings) - 8} more pantry spices.")
         else:
-            st.write("Ingredient list is tucked away in the chef's secret notes!")
+            st.caption("Pantry spices listed in notes.")
 
-    # Step by Step Instructions
-    with st.expander("📋 Step-by-Step Cooking Steps", expanded=True):
-        if not instructions or pd.isna(instructions):
-            st.info("Instructions are not transcribed in this edition. Check the original source link!")
-        else:
+        # Left Page Bottom Bar: Flip between recipes
+        st.markdown("<div style='height:15px;'></div>", unsafe_allow_html=True)
+        b_prev, b_toc = st.columns([1, 1])
+        b_prev.button("◀ Prev Recipe", on_click=prev_recipe, disabled=(active_idx == 0), use_container_width=True)
+        b_toc.button("📑 Flip to Index", on_click=set_book_mode, args=("index",), use_container_width=True)
+
+    # RIGHT PAGE: Cooking Steps (Paginated!) & Tasting Notes
+    with page_col_right:
+        st.markdown(f"""
+        <div class="antique-page-header">
+            <span>📋 METHOD & TASTING</span>
+            <span>RECIPE #{active_row.get('srno') or '★'}</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Parse instructions into clean steps
+        steps = []
+        if instructions and pd.notna(instructions):
             inst_text = str(instructions).strip()
-            steps = []
             if "\n" in inst_text and inst_text.count("\n") > 2:
                 steps = [s.strip() for s in inst_text.split("\n") if s.strip()]
             else:
                 steps = [s.strip() for s in inst_text.split(".") if len(s.strip()) > 5]
 
-            spoon_icons = ["🥄", "🍳", "🔪", "🔥", "🧂", "🍲", "✨", "🥘", "🌿", "🍽️"]
-            for i, step in enumerate(steps, start=1):
-                icon = spoon_icons[(i - 1) % len(spoon_icons)]
-                st.markdown(f"""
-                <div style="background: #FFFDF9; border-left: 3px solid #E07A5F; padding: 6px 10px; margin-bottom: 6px; border-radius: 0 8px 8px 0; font-size: 13px;">
-                    <strong style="color: #D95D39;">Step {i} {icon}:</strong> {step.rstrip('.')}
-                </div>
-                """, unsafe_allow_html=True)
+        if not steps:
+            steps = ["Follow preparation instructions as specified by the chef in the original source link."]
 
-    # Rating Form
-    with st.form(key=f"taste_form_{active_row.name}"):
-        f_col1, f_col2 = st.columns([2, 1])
-        with f_col1:
-            rating_stars = st.radio("Rate this dish:", [1, 2, 3, 4, 5], index=4, horizontal=True, key=f"star_rad_{active_row.name}")
-        with f_col2:
-            st.markdown("<div style='height: 25px;'></div>", unsafe_allow_html=True)
-            submitted = st.form_submit_button("✍️ Save Note", use_container_width=True)
-            if submitted:
-                p_save = [s.strip().lower() for s in pantry_current.split(",") if s.strip()] if pantry_current else []
-                append_feedback(FEEDBACK_FILE, recipename, p_save, int(rating_stars))
-                st.success("Tasting note saved to journal! ⭐")
+        # Paginate steps so there is ZERO SCROLLING!
+        steps_per_page = 4
+        total_step_pages = max(1, int(np.ceil(len(steps) / steps_per_page)))
+        cur_step_page = min(st.session_state.get("step_page", 0), total_step_pages - 1)
+
+        start_step = cur_step_page * steps_per_page
+        end_step = min(start_step + steps_per_page, len(steps))
+        page_steps = steps[start_step:end_step]
+
+        st.markdown(f"""
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-family:'Playfair Display', serif; font-size:16px; color:#5A3626; font-weight:700;">
+                Cooking Steps ({cur_step_page + 1}/{total_step_pages})
+            </span>
+            <span style="font-size:12px; color:#8C6A53; font-family:'Patrick Hand', cursive;">
+                Steps {start_step + 1} to {end_step} of {len(steps)}
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+
+        spoon_icons = ["🥄", "🍳", "🔪", "🔥", "🧂", "🍲", "✨", "🥘", "🌿", "🍽️"]
+        for i, step_text in enumerate(page_steps, start=start_step + 1):
+            s_icon = spoon_icons[(i - 1) % len(spoon_icons)]
+            st.markdown(f"""
+            <div class="step-card">
+                <strong style="color:#D95D39;">Step {i} {s_icon}:</strong> {step_text.rstrip('.')}
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Step Flipper buttons
+        if total_step_pages > 1:
+            s_btn1, s_btn2 = st.columns([1, 1])
+            s_btn1.button("◀ Earlier Steps", on_click=prev_steps, disabled=(cur_step_page == 0), use_container_width=True)
+            s_btn2.button("Later Steps ▶", on_click=next_steps, args=(total_step_pages - 1,), disabled=(cur_step_page >= total_step_pages - 1), use_container_width=True)
+
+        # Tasting Rating
+        st.markdown("<div style='font-family:Patrick Hand, cursive; font-size:14px; font-weight:700; color:#5A3626; margin-top:6px;'>⭐ Rate this Recipe:</div>", unsafe_allow_html=True)
+        with st.form(key=f"star_review_form_{active_row.name}"):
+            r_c1, r_c2 = st.columns([2, 1])
+            with r_c1:
+                r_val = st.radio("Rating:", [1, 2, 3, 4, 5], index=4, horizontal=True, label_visibility="collapsed", key=f"r_star_{active_row.name}")
+            with r_c2:
+                sub = st.form_submit_button("✍️ Save Note", use_container_width=True)
+                if sub:
+                    p_current = st.session_state.get("pantry_ingredients", "")
+                    p_list = [s.strip().lower() for s in p_current.split(",") if s.strip()] if p_current else []
+                    append_feedback(FEEDBACK_FILE, recipename, p_list, int(r_val))
+                    st.success("Saved! ⭐")
+
+        # Right Page Bottom Bar: Next Recipe
+        st.markdown("<div style='height:4px;'></div>", unsafe_allow_html=True)
+        if recipe_url and pd.notna(recipe_url) and str(recipe_url).startswith("http"):
+            st.markdown(f"<div style='text-align:center; font-size:12px;'><a href='{recipe_url}' target='_blank' style='color:#D95D39; text-decoration:none;'>🔗 View Source Recipe ↗</a></div>", unsafe_allow_html=True)
+        st.button("Next Recipe ▶", on_click=next_recipe, disabled=(active_idx >= len(df) - 1), use_container_width=True)
