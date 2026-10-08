@@ -3,11 +3,7 @@ import json
 import streamlit as st
 import streamlit.components.v1 as components
 
-# -------------------------------------------------------------------
-# Configuration & Constants
-# -------------------------------------------------------------------
-DATA_FOLDER = "data"
-RECIPES_DATA_FILE = os.path.join(DATA_FOLDER, "recipes_book_data.json")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # -------------------------------------------------------------------
 # Streamlit Page Config
@@ -57,17 +53,44 @@ st.markdown("""
 
 @st.cache_data(show_spinner=False)
 def get_recipes_json() -> str:
-    if os.path.exists(RECIPES_DATA_FILE):
-        with open(RECIPES_DATA_FILE, "r", encoding="utf-8") as f:
-            return f.read()
+    candidates = [
+        os.path.join(BASE_DIR, "data", "recipes_book_data.json"),
+        os.path.join("data", "recipes_book_data.json"),
+        "recipes_book_data.json"
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            try:
+                with open(c, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    if len(content) > 100:
+                        return content
+            except Exception:
+                pass
+    
+    for root, _, files in os.walk(BASE_DIR):
+        if "recipes_book_data.json" in files:
+            with open(os.path.join(root, "recipes_book_data.json"), "r", encoding="utf-8") as f:
+                return f.read()
+                
     return "[]"
 
 recipes_json_str = get_recipes_json()
 
 # Load HTML template
-html_path = os.path.join(os.path.dirname(__file__), "antique_flipbook.html")
-if not os.path.exists(html_path):
-    html_path = "antique_flipbook.html"
+html_candidates = [
+    os.path.join(BASE_DIR, "antique_flipbook.html"),
+    "antique_flipbook.html"
+]
+html_path = None
+for hc in html_candidates:
+    if os.path.exists(hc):
+        html_path = hc
+        break
+
+if not html_path:
+    st.error("antique_flipbook.html not found.")
+    st.stop()
 
 with open(html_path, "r", encoding="utf-8") as f:
     html_template = f.read()

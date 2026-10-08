@@ -1041,23 +1041,23 @@
         <div>
           <div class="washi-tape-strip"></div>
           <div class="recipe-header-row">
-            <span id="recCuisineCourse">✨ NORTH INDIAN • MAIN COURSE</span>
+            <span id="recCuisineCourse">✨ HEIRLOOM RECIPE</span>
             <span id="recPageNumTag">RECIPE #1</span>
           </div>
 
-          <h2 class="recipe-main-title" id="recTitle">Shahi Paneer Royale</h2>
+          <h2 class="recipe-main-title" id="recTitle">Culinary Wonder</h2>
 
           <!-- Hero: Photo & Stats -->
           <div class="recipe-hero-box">
             <img id="recImg" src="" alt="Recipe Photo" onerror="this.src='https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=500&q=80'">
             <div class="hero-stats-content">
               <div class="stats-badges-line">
-                <span class="badge-chip" id="recTime">⏱️ 35m</span>
+                <span class="badge-chip" id="recTime">⏱️ 30m</span>
                 <span class="badge-chip" id="recServings">👥 4 Servings</span>
               </div>
               <div class="wax-seal-pill" id="recSeal">🏅 Golden Wholesome</div>
               <div class="macro-nutrition-bar" id="recMacros">
-                🔥 <strong>280</strong> kcal • 🍗 <strong>14g</strong> P • 🥑 <strong>12g</strong> F
+                🔥 <strong>250</strong> kcal • 🍗 <strong>10g</strong> P • 🥑 <strong>8g</strong> F
               </div>
             </div>
           </div>
@@ -1068,7 +1068,7 @@
             <div class="detail-panel">
               <div class="panel-title">
                 <span>🧂 Ingredients</span>
-                <span id="ingCountTag" style="font-size:12px; color:#8C6A53;">(8)</span>
+                <span id="ingCountTag" style="font-size:12px; color:#8C6A53;"></span>
               </div>
               <div class="ingredients-checklist" id="recIngredientsList"></div>
             </div>
@@ -1079,13 +1079,13 @@
                 <div>
                   <div class="panel-title">
                     <span>🍳 Method</span>
-                    <span id="stepRangeTag" style="font-size:12px; color:#8C6A53;">Steps 1-3</span>
+                    <span id="stepRangeTag" style="font-size:12px; color:#8C6A53;"></span>
                   </div>
                   <div class="step-cards-list" id="recStepsList"></div>
                 </div>
                 <div class="step-pagination-bar">
                   <button class="btn-step-flip" id="btnStepPrev" onclick="changeStepPage(-1)">◀ Earlier</button>
-                  <span id="stepPageIndicator">1 / 2</span>
+                  <span id="stepPageIndicator">1 / 1</span>
                   <button class="btn-step-flip" id="btnStepNext" onclick="changeStepPage(1)">Later ▶</button>
                 </div>
               </div>
@@ -1181,7 +1181,19 @@
     updateIndexPagination();
   }
 
+  function normalizeWord(w) {
+    let s = w.toLowerCase().trim();
+    if (s.endsWith('ies')) s = s.slice(0, -3) + 'y';
+    else if (s.endsWith('es') && !s.endsWith('ches') && !s.endsWith('shes')) s = s.slice(0, -2);
+    else if (s.endsWith('s') && !s.endsWith('ss')) s = s.slice(0, -1);
+    return s;
+  }
+
   function initApp() {
+    if (!Array.isArray(RECIPES) || RECIPES.length === 0) {
+      console.warn('RECIPES dataset is empty');
+      return;
+    }
     renderChapters();
     renderIndex();
     renderActiveRecipe();
@@ -1198,6 +1210,7 @@
     });
 
     const wrap = document.getElementById('chapterChipsList');
+    if (!wrap) return;
     wrap.innerHTML = cuisines.slice(0, 11).map(c => 
       `<button class="chapter-chip ${c === activeChapter ? 'active' : ''}" onclick="selectChapter('${c}')">${c}</button>`
     ).join('');
@@ -1211,19 +1224,52 @@
   }
 
   function onSearchChange(val) {
-    currentSearchQuery = val.toLowerCase().trim();
+    currentSearchQuery = val.trim();
     indexCurrentPage = 0;
     renderIndex();
   }
 
   function getFilteredRecipes() {
-    return RECIPES.filter(r => {
-      const matchChap = (activeChapter === 'All' || r.cuisine === activeChapter);
-      const matchSearch = !currentSearchQuery || 
-        r.title.toLowerCase().includes(currentSearchQuery) || 
-        (r.ingredients && r.ingredients.some(i => i.toLowerCase().includes(currentSearchQuery)));
-      return matchChap && matchSearch;
-    });
+    if (!currentSearchQuery || !currentSearchQuery.trim()) {
+      return RECIPES.filter(r => (activeChapter === 'All' || r.cuisine === activeChapter));
+    }
+
+    const rawTokens = currentSearchQuery.toLowerCase().split(/[,\s]+/).map(t => t.trim()).filter(t => t.length > 1);
+    const tokens = rawTokens.map(normalizeWord);
+
+    const scored = [];
+    for (const r of RECIPES) {
+      if (activeChapter !== 'All' && r.cuisine !== activeChapter) continue;
+
+      const titleLower = (r.title || '').toLowerCase();
+      const ingsLower = (r.ingredients || []).map(i => i.toLowerCase()).join(' ');
+
+      let matchCount = 0;
+      let titleBoost = 0;
+
+      for (let i = 0; i < tokens.length; i++) {
+        const raw = rawTokens[i];
+        const norm = tokens[i];
+
+        const inTitle = titleLower.includes(raw) || titleLower.includes(norm);
+        const inIngs = ingsLower.includes(raw) || ingsLower.includes(norm);
+
+        if (inTitle) {
+          matchCount++;
+          titleBoost += 4;
+        } else if (inIngs) {
+          matchCount++;
+        }
+      }
+
+      if (matchCount > 0) {
+        const score = (matchCount / tokens.length) * 10 + titleBoost;
+        scored.push({ recipe: r, score, matchCount });
+      }
+    }
+
+    scored.sort((a, b) => b.score - a.score);
+    return scored.map(s => s.recipe);
   }
 
   function renderIndex() {
@@ -1235,8 +1281,9 @@
     const pageItems = list.slice(start, start + INDEX_PER_PAGE);
 
     const container = document.getElementById('indexRecipeList');
+    if (!container) return;
     if (pageItems.length === 0) {
-      container.innerHTML = '<div style="font-family:Patrick Hand, cursive; font-size:14px; color:#8C6A53; text-align:center; padding-top:40px;">No recipes found in this chapter. Try another search!</div>';
+      container.innerHTML = '<div style="font-family:Patrick Hand, cursive; font-size:14px; color:#8C6A53; text-align:center; padding-top:40px;">No recipes found. Try searching for "egg", "paneer", "chicken", or "pasta"!</div>';
     } else {
       container.innerHTML = pageItems.map(r => {
         const isSel = r.id === RECIPES[currentRecipeIndex]?.id;
@@ -1258,9 +1305,12 @@
   function updateIndexPagination() {
     const list = getFilteredRecipes();
     const totalPages = Math.max(1, Math.ceil(list.length / INDEX_PER_PAGE));
-    document.getElementById('indexPageLabel').innerText = `Page ${indexCurrentPage + 1} of ${totalPages}`;
-    document.getElementById('btnIndexPrev').disabled = (indexCurrentPage === 0);
-    document.getElementById('btnIndexNext').disabled = (indexCurrentPage >= totalPages - 1);
+    const lbl = document.getElementById('indexPageLabel');
+    if (lbl) lbl.innerText = `Page ${indexCurrentPage + 1} of ${totalPages}`;
+    const p = document.getElementById('btnIndexPrev');
+    if (p) p.disabled = (indexCurrentPage === 0);
+    const n = document.getElementById('btnIndexNext');
+    if (n) n.disabled = (indexCurrentPage >= totalPages - 1);
   }
 
   function changeIndexPage(delta) {
@@ -1295,50 +1345,69 @@
   }
 
   function renderActiveRecipe() {
-    if (!RECIPES.length) return;
-    const r = RECIPES[currentRecipeIndex];
+    if (!Array.isArray(RECIPES) || !RECIPES.length) return;
+    const r = RECIPES[currentRecipeIndex] || RECIPES[0];
+    if (!r) return;
 
-    document.getElementById('recCuisineCourse').innerText = `✨ ${(r.cuisine || 'SPECIALTY').toUpperCase()} • ${(r.course || 'DELICACY').toUpperCase()}`;
-    document.getElementById('recPageNumTag').innerText = `RECIPE #${r.id + 1}`;
-    document.getElementById('recTitle').innerText = r.title;
-    document.getElementById('recImg').src = r.image;
-    document.getElementById('recTime').innerText = `⏱️ ${r.time}m`;
-    document.getElementById('recServings').innerText = `👥 ${r.servings} Servings`;
-    document.getElementById('recSeal').innerText = `🏅 ${r.seal || 'Golden Wholesome'}`;
+    const topMeta = document.getElementById('recCuisineCourse');
+    if (topMeta) topMeta.innerText = `✨ ${(r.cuisine || 'SPECIALTY').toUpperCase()} • ${(r.course || 'DELICACY').toUpperCase()}`;
+    const pageNum = document.getElementById('recPageNumTag');
+    if (pageNum) pageNum.innerText = `RECIPE #${(r.id != null ? r.id : 0) + 1}`;
+    const titleEl = document.getElementById('recTitle');
+    if (titleEl) titleEl.innerText = r.title || 'Untitled Recipe';
+    const imgEl = document.getElementById('recImg');
+    if (imgEl) imgEl.src = r.image || 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=500&q=80';
+    const timeEl = document.getElementById('recTime');
+    if (timeEl) timeEl.innerText = `⏱️ ${r.time || 30}m`;
+    const servEl = document.getElementById('recServings');
+    if (servEl) servEl.innerText = `👥 ${r.servings || 4} Servings`;
+    const sealEl = document.getElementById('recSeal');
+    if (sealEl) sealEl.innerText = `🏅 ${r.seal || 'Golden Wholesome'}`;
 
     const nut = r.nutrition || {};
-    document.getElementById('recMacros').innerHTML = `
-      🔥 <strong>${Math.round(nut.calories || 250)}</strong> kcal • 
-      🍗 <strong>${(nut.protein || 10).toFixed(1)}g</strong> P • 
-      🥑 <strong>${(nut.fat || 8).toFixed(1)}g</strong> F
-    `;
+    const macroEl = document.getElementById('recMacros');
+    if (macroEl) {
+      macroEl.innerHTML = `
+        🔥 <strong>${Math.round(nut.calories || 250)}</strong> kcal • 
+        🍗 <strong>${(nut.protein || 10).toFixed(1)}g</strong> P • 
+        🥑 <strong>${(nut.fat || 8).toFixed(1)}g</strong> F
+      `;
+    }
 
     // Ingredients checklist
     const ings = r.ingredients || [];
-    document.getElementById('ingCountTag').innerText = `(${ings.length})`;
-    document.getElementById('recIngredientsList').innerHTML = ings.map((ing, i) => `
-      <label class="ing-check-item" id="label_chk_${i}">
-        <input type="checkbox" onchange="toggleIngredientCheck(this, ${i})">
-        <span>${ing}</span>
-      </label>
-    `).join('');
+    const ingTag = document.getElementById('ingCountTag');
+    if (ingTag) ingTag.innerText = `(${ings.length})`;
+    const ingsListEl = document.getElementById('recIngredientsList');
+    if (ingsListEl) {
+      ingsListEl.innerHTML = ings.map((ing, i) => `
+        <label class="ing-check-item" id="label_chk_${i}">
+          <input type="checkbox" onchange="toggleIngredientCheck(this, ${i})">
+          <span>${ing}</span>
+        </label>
+      `).join('');
+    }
 
     renderSteps();
     updateStarDisplay(ratingsMap[r.id] || 0);
 
-    document.getElementById('btnPrevRecipe').disabled = (currentRecipeIndex === 0);
-    document.getElementById('btnNextRecipe').disabled = (currentRecipeIndex >= RECIPES.length - 1);
+    const prevB = document.getElementById('btnPrevRecipe');
+    if (prevB) prevB.disabled = (currentRecipeIndex === 0);
+    const nextB = document.getElementById('btnNextRecipe');
+    if (nextB) nextB.disabled = (currentRecipeIndex >= RECIPES.length - 1);
   }
 
   function toggleIngredientCheck(cb, idx) {
     const label = document.getElementById('label_chk_' + idx);
+    if (!label) return;
     if (cb.checked) label.classList.add('checked');
     else label.classList.remove('checked');
   }
 
   function renderSteps() {
-    const r = RECIPES[currentRecipeIndex];
-    const steps = r.steps || ["Follow traditional preparation instructions."];
+    const r = RECIPES[currentRecipeIndex] || RECIPES[0];
+    if (!r) return;
+    const steps = r.steps && r.steps.length ? r.steps : ["Follow traditional preparation instructions."];
     const totalStepPages = Math.max(1, Math.ceil(steps.length / STEPS_PER_PAGE));
     stepCurrentPage = Math.min(stepCurrentPage, totalStepPages - 1);
 
@@ -1346,24 +1415,32 @@
     const currentSteps = steps.slice(start, start + STEPS_PER_PAGE);
 
     const icons = ["🥄", "🍳", "🔥", "🧂", "🍲", "🌿", "🍽️"];
-    document.getElementById('recStepsList').innerHTML = currentSteps.map((st, i) => {
-      const stepNum = start + i + 1;
-      const icon = icons[(stepNum - 1) % icons.length];
-      return `
-        <div class="step-card-box">
-          <strong>Step ${stepNum} ${icon}:</strong> ${st}
-        </div>
-      `;
-    }).join('');
+    const stepsListEl = document.getElementById('recStepsList');
+    if (stepsListEl) {
+      stepsListEl.innerHTML = currentSteps.map((st, i) => {
+        const stepNum = start + i + 1;
+        const icon = icons[(stepNum - 1) % icons.length];
+        return `
+          <div class="step-card-box">
+            <strong>Step ${stepNum} ${icon}:</strong> ${st}
+          </div>
+        `;
+      }).join('');
+    }
 
-    document.getElementById('stepRangeTag').innerText = `Steps ${start + 1}-${Math.min(start + STEPS_PER_PAGE, steps.length)} of ${steps.length}`;
-    document.getElementById('stepPageIndicator').innerText = `${stepCurrentPage + 1} / ${totalStepPages}`;
-    document.getElementById('btnStepPrev').disabled = (stepCurrentPage === 0);
-    document.getElementById('btnStepNext').disabled = (stepCurrentPage >= totalStepPages - 1);
+    const rangeTag = document.getElementById('stepRangeTag');
+    if (rangeTag) rangeTag.innerText = `Steps ${start + 1}-${Math.min(start + STEPS_PER_PAGE, steps.length)} of ${steps.length}`;
+    const indicator = document.getElementById('stepPageIndicator');
+    if (indicator) indicator.innerText = `${stepCurrentPage + 1} / ${totalStepPages}`;
+    const pBtn = document.getElementById('btnStepPrev');
+    if (pBtn) pBtn.disabled = (stepCurrentPage === 0);
+    const nBtn = document.getElementById('btnStepNext');
+    if (nBtn) nBtn.disabled = (stepCurrentPage >= totalStepPages - 1);
   }
 
   function changeStepPage(delta) {
     const r = RECIPES[currentRecipeIndex];
+    if (!r) return;
     const steps = r.steps || [];
     const totalStepPages = Math.max(1, Math.ceil(steps.length / STEPS_PER_PAGE));
     stepCurrentPage = Math.max(0, Math.min(totalStepPages - 1, stepCurrentPage + delta));
@@ -1372,14 +1449,17 @@
 
   function rateActiveRecipe(stars) {
     const r = RECIPES[currentRecipeIndex];
+    if (!r) return;
     ratingsMap[r.id] = stars;
     try {
       localStorage.setItem('wannabechef_ratings', JSON.stringify(ratingsMap));
     } catch(e) {}
     updateStarDisplay(stars);
     const msg = document.getElementById('ratedMessage');
-    msg.innerText = `Saved ${stars}★!`;
-    setTimeout(() => { msg.innerText = ''; }, 2000);
+    if (msg) {
+      msg.innerText = `Saved ${stars}★!`;
+      setTimeout(() => { msg.innerText = ''; }, 2000);
+    }
   }
 
   function updateStarDisplay(stars) {
@@ -1391,32 +1471,46 @@
   }
 
   function setPantrySearch(text) {
-    document.getElementById('pantryInput').value = text;
+    const pInput = document.getElementById('pantryInput');
+    if (pInput) pInput.value = text;
     onPantryChange(text);
   }
 
   function onPantryChange(val) {
-    currentPantryQuery = val.toLowerCase().trim();
+    currentPantryQuery = (val || '').toLowerCase().trim();
+    const container = document.getElementById('pantryRecipeList');
+    if (!container) return;
+
     if (!currentPantryQuery) {
-      document.getElementById('pantryRecipeList').innerHTML = '<div style="font-family:Patrick Hand, cursive; font-size:14px; color:#8C6A53; text-align:center; padding-top:40px;">Enter ingredients or choose a preset idea above!</div>';
+      container.innerHTML = '<div style="font-family:Patrick Hand, cursive; font-size:14px; color:#8C6A53; text-align:center; padding-top:40px;">Enter ingredients or choose a preset idea above!</div>';
       return;
     }
-    const userTokens = currentPantryQuery.split(',').map(s => s.trim()).filter(Boolean);
-    const scored = RECIPES.map(r => {
-      const ings = (r.ingredients || []).map(i => i.toLowerCase());
-      let matches = 0;
-      userTokens.forEach(ut => {
-        if (ings.some(ing => ing.includes(ut) || ut.includes(ing))) matches++;
-      });
-      const score = userTokens.length ? (matches / userTokens.length) : 0;
-      return { recipe: r, score };
-    }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 5);
 
-    const container = document.getElementById('pantryRecipeList');
-    if (scored.length === 0) {
+    const rawTokens = currentPantryQuery.split(/[,\s]+/).map(s => s.trim()).filter(s => s.length > 1);
+    const tokens = rawTokens.map(normalizeWord);
+
+    const scored = [];
+    for (const r of RECIPES) {
+      const ingsLower = (r.ingredients || []).map(i => i.toLowerCase()).join(' ');
+      let matches = 0;
+      for (let i = 0; i < tokens.length; i++) {
+        if (ingsLower.includes(rawTokens[i]) || ingsLower.includes(tokens[i])) {
+          matches++;
+        }
+      }
+      if (matches > 0) {
+        const score = (matches / tokens.length);
+        scored.push({ recipe: r, score, matches });
+      }
+    }
+
+    scored.sort((a, b) => b.score - a.score);
+    const topScored = scored.slice(0, 5);
+
+    if (topScored.length === 0) {
       container.innerHTML = '<div style="font-family:Patrick Hand, cursive; font-size:14px; color:#8C6A53; text-align:center; padding-top:40px;">No exact recipe matches found. Try adding more pantry spices!</div>';
     } else {
-      container.innerHTML = scored.map(item => `
+      container.innerHTML = topScored.map(item => `
         <div class="index-recipe-row" onclick="selectRecipeById(${item.recipe.id})">
           <div class="row-meta-left">
             <span class="row-title">${item.recipe.title}</span>
@@ -1430,6 +1524,7 @@
 
   function renderDiary() {
     const container = document.getElementById('diaryRecipeList');
+    if (!container) return;
     const ratedIds = Object.keys(ratingsMap);
     if (!ratedIds.length) {
       container.innerHTML = '<div style="font-family:Patrick Hand, cursive; font-size:14px; color:#8C6A53; text-align:center; padding-top:40px;">No recipes rated yet! Turn pages, cook a recipe, and give it stars! ⭐</div>';
@@ -1455,7 +1550,10 @@
     else if (e.key === 'Escape') closeBook();
   });
 
-  window.onload = initApp;
+  // Execute initialization reliably
+  document.addEventListener('DOMContentLoaded', initApp);
+  window.addEventListener('load', initApp);
+  initApp();
 </script>
 </body>
 </html>
