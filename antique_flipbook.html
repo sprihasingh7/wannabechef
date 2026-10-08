@@ -296,16 +296,17 @@
 
   .bookmark-ribbon {
     position: absolute;
-    top: -24px;
-    left: 49%;
-    width: 24px;
-    height: 700px;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: calc(100% + 24px);
     background: linear-gradient(90deg, #1b5e20, #2e7d32 50%, #144618 100%);
-    box-shadow: 3px 0 10px rgba(0,0,0,0.4);
+    box-shadow: 2px 0 8px rgba(0,0,0,0.35);
     pointer-events: none;
     z-index: 15;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 97%, 0 100%);
-    opacity: 0.85;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 94%, 0 100%);
+    opacity: 0.9;
   }
 
   /* Spread */
@@ -360,6 +361,7 @@
       linear-gradient(to right, #FBF4E9 88%, #E9DBC6 100%);
     border-right: 1px solid #D8C3A7;
     box-shadow: inset -15px 0 20px -8px rgba(70, 40, 20, 0.12);
+    padding: 10px 26px 8px 16px;
   }
 
   .book-page.right {
@@ -367,6 +369,7 @@
       radial-gradient(circle at 85% 25%, #FFFDF9 0%, transparent 65%),
       linear-gradient(to left, #FBF4E9 88%, #E9DBC6 100%);
     box-shadow: inset 15px 0 20px -8px rgba(70, 40, 20, 0.12);
+    padding: 10px 16px 8px 26px;
   }
 
   /* Mobile Navigation Button (Hidden on Desktop) */
@@ -693,58 +696,67 @@
   /* ========================================================= */
   /* WELCOME & EMPTY STATES                                    */
   /* ========================================================= */
+  .index-recipe-list:has(.index-welcome-box) {
+    overflow-y: hidden !important;
+  }
+
   .index-welcome-box {
     background: #FFFDF9;
     border: 1.5px dashed #D6C3AB;
     border-radius: 12px;
-    padding: 10px 12px;
+    padding: 6px 10px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     height: 100%;
+    max-height: 202px;
     box-sizing: border-box;
+    overflow: hidden;
   }
   .welcome-fairy-icon {
-    font-size: 24px;
-    margin-bottom: 2px;
+    font-size: 19px;
+    margin-bottom: 1px;
+    line-height: 1;
   }
   .welcome-title {
     font-family: 'Playfair Display', serif;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     color: #38241B;
-    margin-bottom: 2px;
+    margin-bottom: 1px;
+    line-height: 1.15;
   }
   .welcome-desc {
     font-family: 'Quicksand', sans-serif;
-    font-size: 11px;
+    font-size: 10.5px;
     color: #7A5B45;
-    line-height: 1.35;
-    margin-bottom: 8px;
-    max-width: 320px;
+    line-height: 1.25;
+    margin-bottom: 4px;
+    max-width: 300px;
   }
   .welcome-prompt-label {
     font-family: 'Patrick Hand', cursive;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     color: #5C3825;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
   }
   .welcome-chips-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 5px;
+    gap: 4px;
     width: 100%;
-    max-width: 320px;
+    max-width: 310px;
   }
   .welcome-chip {
     background: #FFFFFF;
     border: 1px solid #DFCFBD;
-    border-radius: 8px;
-    padding: 4px 6px;
+    border-radius: 6px;
+    padding: 3px 6px;
     font-family: 'Patrick Hand', cursive;
-    font-size: 12.5px;
+    font-size: 11.5px;
     color: #5C3825;
     cursor: pointer;
     transition: all 0.15s ease;
@@ -1219,6 +1231,12 @@
     }
     .book-page {
       padding: 8px 14px 6px 14px;
+    }
+    .book-page.left {
+      padding: 8px 24px 6px 14px;
+    }
+    .book-page.right {
+      padding: 8px 14px 6px 24px;
     }
     .recipe-hero-box {
       grid-template-columns: 95px 1fr;
