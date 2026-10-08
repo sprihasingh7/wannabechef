@@ -684,6 +684,181 @@
   }
 
   /* ========================================================= */
+  /* WELCOME & EMPTY STATES                                    */
+  /* ========================================================= */
+  .index-welcome-box {
+    background: #FFFDF9;
+    border: 1.5px dashed #D6C3AB;
+    border-radius: 12px;
+    padding: 10px 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    box-sizing: border-box;
+  }
+  .welcome-fairy-icon {
+    font-size: 24px;
+    margin-bottom: 2px;
+  }
+  .welcome-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #38241B;
+    margin-bottom: 2px;
+  }
+  .welcome-desc {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 11px;
+    color: #7A5B45;
+    line-height: 1.35;
+    margin-bottom: 8px;
+    max-width: 320px;
+  }
+  .welcome-prompt-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+    font-weight: 700;
+    color: #5C3825;
+    margin-bottom: 5px;
+  }
+  .welcome-chips-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    width: 100%;
+    max-width: 320px;
+  }
+  .welcome-chip {
+    background: #FFFFFF;
+    border: 1px solid #DFCFBD;
+    border-radius: 8px;
+    padding: 4px 6px;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12.5px;
+    color: #5C3825;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .welcome-chip:hover {
+    border-color: #D95D39;
+    background: #FFF5EE;
+    color: #D95D39;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(217, 93, 57, 0.15);
+  }
+
+  .index-empty-search {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 36px;
+    text-align: center;
+  }
+
+  /* Right Page Empty State */
+  .rec-empty-state {
+    display: block;
+    height: 100%;
+  }
+  .rec-filled-state {
+    display: none;
+    height: 100%;
+  }
+  .grimoire-empty-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8px 12px;
+    height: 335px;
+  }
+  .grimoire-crest {
+    font-size: 30px;
+    margin-bottom: 3px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    animation: gentleBob 3s ease-in-out infinite;
+  }
+  @keyframes gentleBob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  .grimoire-intro-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: #38241B;
+    margin-bottom: 3px;
+  }
+  .grimoire-intro-quote {
+    font-family: 'Caveat', cursive;
+    font-size: 15px;
+    color: #8C6A53;
+    font-style: italic;
+    margin-bottom: 10px;
+    max-width: 380px;
+    line-height: 1.2;
+  }
+  .grimoire-guide-box {
+    background: #FFFDF9;
+    border: 1.5px dashed #D6C3AB;
+    border-radius: 12px;
+    padding: 9px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    text-align: left;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.03);
+  }
+  .guide-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 11.5px;
+    color: #4A3326;
+    line-height: 1.3;
+  }
+  .guide-icon {
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+  .grimoire-badge {
+    background: #EEDCCE;
+    color: #7A5B45;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 11px;
+    padding: 1px 8px;
+    border-radius: 8px;
+    font-weight: 700;
+  }
+  .btn-back-grimoire {
+    background: #FFF2DF;
+    border: 1px solid #D95D39;
+    color: #D95D39;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn-back-grimoire:hover {
+    background: #D95D39;
+    color: #FFFFFF;
+  }
+
+  /* ========================================================= */
   /* RIGHT PAGE (ACTIVE RECIPE)                                */
   /* ========================================================= */
   .washi-tape-strip {
@@ -1294,12 +1469,48 @@
 
       <!-- RIGHT PAGE -->
       <div class="book-page right">
-        <div>
+        <!-- 1. EMPTY / WELCOME STATE (Initially displayed) -->
+        <div id="recEmptyState" class="rec-empty-state">
+          <div class="washi-tape-strip"></div>
+          <div class="recipe-header-row">
+            <button class="mobile-nav-btn" onclick="setMobileView('index')" title="Browse Index">◀ 📑 Index</button>
+            <span>✨ A CHEF'S SECRET COMPANION ✨</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <span class="grimoire-badge">GRIMOIRE</span>
+              <button class="btn-close-book mobile-nav-btn" onclick="closeBook()" title="Close Book">📕</button>
+            </div>
+          </div>
+
+          <div class="grimoire-empty-body">
+            <div class="grimoire-crest">📖 🕯️ 🍳</div>
+            <h2 class="grimoire-intro-title">The Pages Await</h2>
+            <p class="grimoire-intro-quote">"Every great feast begins with a clean apron and an inspired heart."</p>
+
+            <div class="grimoire-guide-box">
+              <div class="guide-item">
+                <span class="guide-icon">🔍</span>
+                <span><strong>Search or Pick a Chapter:</strong> Find dishes by cuisine or ingredient on the left page.</span>
+              </div>
+              <div class="guide-item">
+                <span class="guide-icon">📖</span>
+                <span><strong>Tap Read:</strong> Turn the page to summon full cooking steps, ingredients & macros.</span>
+              </div>
+              <div class="guide-item">
+                <span class="guide-icon">⭐</span>
+                <span><strong>Rate Dishes:</strong> Give stars to your creations and keep them forever in your Diary!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. ACTIVE RECIPE FILLED STATE (Displayed when recipe is chosen) -->
+        <div id="recFilledState" class="rec-filled-state">
           <div class="washi-tape-strip"></div>
           <div class="recipe-header-row">
             <button class="mobile-nav-btn" onclick="setMobileView('index')" title="Browse Index">◀ 📑 Index</button>
             <span id="recCuisineCourse">✨ HEIRLOOM RECIPE</span>
             <div style="display:flex; gap:6px; align-items:center;">
+              <button class="btn-back-grimoire" onclick="clearRecipeSelection()" title="Back to blank Grimoire">✨ Grimoire</button>
               <span id="recPageNumTag">RECIPE #1</span>
               <button class="btn-close-book mobile-nav-btn" onclick="closeBook()" title="Close Book">📕</button>
             </div>
@@ -1355,7 +1566,7 @@
 
         <!-- Right Page Footer -->
         <div class="right-page-footer">
-          <div class="star-rating-box">
+          <div class="star-rating-box" id="starRatingBox">
             <span style="font-family:'Patrick Hand', cursive; font-size:13px; color:#7A5B45;">Tasting:</span>
             <span class="star" onclick="rateActiveRecipe(1)">★</span>
             <span class="star" onclick="rateActiveRecipe(2)">★</span>
@@ -1382,7 +1593,7 @@
 
 <script>
   /* RECIPES_JSON_PLACEHOLDER */
-  let currentRecipeIndex = 0;
+  let currentRecipeIndex = null;
   let activeTab = 'index';
   let activeChapter = 'All';
   let currentSearchQuery = '';
@@ -1394,7 +1605,19 @@
   let ratingsMap = {};
 
   let isMobile = window.innerWidth <= 820;
-  let mobileView = 'recipe'; // 'recipe' or 'index'
+  let mobileView = 'index'; // 'recipe' or 'index'
+
+  function quickInspire(term) {
+    const sInput = document.getElementById('searchInput');
+    if (sInput) sInput.value = term;
+    onSearchChange(term);
+  }
+
+  function clearRecipeSelection() {
+    currentRecipeIndex = null;
+    renderActiveRecipe();
+    renderIndex();
+  }
 
   try {
     const saved = localStorage.getItem('wannabechef_ratings');
@@ -1618,6 +1841,38 @@
   }
 
   function renderIndex() {
+    const isWelcome = (!currentSearchQuery || !currentSearchQuery.trim()) && activeChapter === 'All';
+    const container = document.getElementById('indexRecipeList');
+    if (!container) return;
+
+    if (isWelcome) {
+      container.innerHTML = `
+        <div class="index-welcome-box">
+          <div class="welcome-fairy-icon">✨ 🥣 ✨</div>
+          <h3 class="welcome-title">Chef's Recipe Grimoire</h3>
+          <p class="welcome-desc">
+            Type any ingredient or dish name above, or tap a cuisine chapter to open recipes!
+          </p>
+          <div class="welcome-prompt-label">🌟 Quick Inspirations:</div>
+          <div class="welcome-chips-grid">
+            <button class="welcome-chip" onclick="quickInspire('paneer')">🧀 Paneer</button>
+            <button class="welcome-chip" onclick="quickInspire('egg')">🥚 Egg Delicacies</button>
+            <button class="welcome-chip" onclick="quickInspire('chicken')">🍗 Chicken</button>
+            <button class="welcome-chip" onclick="quickInspire('pasta')">🍝 Artisan Pasta</button>
+            <button class="welcome-chip" onclick="quickInspire('biryani')">🍚 Rice & Biryani</button>
+            <button class="welcome-chip" onclick="quickInspire('dessert')">🧁 Sweet Desserts</button>
+          </div>
+        </div>
+      `;
+      const lbl = document.getElementById('indexPageLabel');
+      if (lbl) lbl.innerText = 'Grimoire Ready';
+      const p = document.getElementById('btnIndexPrev');
+      if (p) p.disabled = true;
+      const n = document.getElementById('btnIndexNext');
+      if (n) n.disabled = true;
+      return;
+    }
+
     const list = getFilteredRecipes();
     const totalPages = Math.max(1, Math.ceil(list.length / INDEX_PER_PAGE));
     indexCurrentPage = Math.min(indexCurrentPage, totalPages - 1);
@@ -1625,13 +1880,18 @@
     const start = indexCurrentPage * INDEX_PER_PAGE;
     const pageItems = list.slice(start, start + INDEX_PER_PAGE);
 
-    const container = document.getElementById('indexRecipeList');
-    if (!container) return;
     if (pageItems.length === 0) {
-      container.innerHTML = '<div style="font-family:Patrick Hand, cursive; font-size:14px; color:#8C6A53; text-align:center; padding-top:40px;">No recipes found. Try searching for "egg", "paneer", "chicken", or "pasta"!</div>';
+      container.innerHTML = `
+        <div class="index-empty-search">
+          <div style="font-size:22px; margin-bottom:4px;">🔍 🍃</div>
+          <div style="font-family:'Patrick Hand', cursive; font-size:14px; color:#8C6A53; text-align:center;">
+            No recipes found for "${currentSearchQuery}".<br>Try searching for "egg", "paneer", "chicken", or "pasta"!
+          </div>
+        </div>
+      `;
     } else {
       container.innerHTML = pageItems.map(r => {
-        const isSel = r.id === RECIPES[currentRecipeIndex]?.id;
+        const isSel = currentRecipeIndex !== null && r.id === RECIPES[currentRecipeIndex]?.id;
         return `
           <div class="index-recipe-row ${isSel ? 'selected' : ''}" onclick="selectRecipeById(${r.id})">
             <div class="row-meta-left">
@@ -1648,6 +1908,8 @@
   }
 
   function updateIndexPagination() {
+    const isWelcome = (!currentSearchQuery || !currentSearchQuery.trim()) && activeChapter === 'All';
+    if (isWelcome) return;
     const list = getFilteredRecipes();
     const totalPages = Math.max(1, Math.ceil(list.length / INDEX_PER_PAGE));
     const lbl = document.getElementById('indexPageLabel');
@@ -1682,21 +1944,48 @@
   }
 
   function navigateRecipe(delta) {
-    const newIdx = currentRecipeIndex + delta;
-    if (newIdx >= 0 && newIdx < RECIPES.length) {
-      triggerPageTurnAnimation(delta, () => {
-        currentRecipeIndex = newIdx;
-        stepCurrentPage = 0;
-        renderActiveRecipe();
-        renderIndex();
-      });
+    if (currentRecipeIndex === null) return;
+    const list = getFilteredRecipes();
+    const activeList = (list && list.length > 0) ? list : RECIPES;
+    if (!activeList.length) return;
+
+    const currentId = RECIPES[currentRecipeIndex]?.id;
+    let pos = activeList.findIndex(r => r.id === currentId);
+    if (pos === -1) pos = 0;
+
+    const nextPos = pos + delta;
+    if (nextPos >= 0 && nextPos < activeList.length) {
+      selectRecipeById(activeList[nextPos].id);
     }
   }
 
   function renderActiveRecipe() {
-    if (!Array.isArray(RECIPES) || !RECIPES.length) return;
-    const r = RECIPES[currentRecipeIndex] || RECIPES[0];
-    if (!r) return;
+    const emptyState = document.getElementById('recEmptyState');
+    const filledState = document.getElementById('recFilledState');
+    const prevB = document.getElementById('btnPrevRecipe');
+    const nextB = document.getElementById('btnNextRecipe');
+
+    if (currentRecipeIndex === null || !Array.isArray(RECIPES) || !RECIPES.length) {
+      if (emptyState) emptyState.style.display = 'block';
+      if (filledState) filledState.style.display = 'none';
+      if (prevB) prevB.disabled = true;
+      if (nextB) nextB.disabled = true;
+      updateStarDisplay(0);
+      return;
+    }
+
+    const r = RECIPES[currentRecipeIndex];
+    if (!r) {
+      if (emptyState) emptyState.style.display = 'block';
+      if (filledState) filledState.style.display = 'none';
+      if (prevB) prevB.disabled = true;
+      if (nextB) nextB.disabled = true;
+      updateStarDisplay(0);
+      return;
+    }
+
+    if (emptyState) emptyState.style.display = 'none';
+    if (filledState) filledState.style.display = 'block';
 
     const topMeta = document.getElementById('recCuisineCourse');
     if (topMeta) topMeta.innerText = `✨ ${(r.cuisine || 'SPECIALTY').toUpperCase()} • ${(r.course || 'DELICACY').toUpperCase()}`;
@@ -1740,10 +2029,12 @@
     renderSteps();
     updateStarDisplay(ratingsMap[r.id] || 0);
 
-    const prevB = document.getElementById('btnPrevRecipe');
-    if (prevB) prevB.disabled = (currentRecipeIndex === 0);
-    const nextB = document.getElementById('btnNextRecipe');
-    if (nextB) nextB.disabled = (currentRecipeIndex >= RECIPES.length - 1);
+    const list = getFilteredRecipes();
+    const activeList = (list && list.length > 0) ? list : RECIPES;
+    const pos = activeList.findIndex(x => x.id === r.id);
+
+    if (prevB) prevB.disabled = (pos <= 0);
+    if (nextB) nextB.disabled = (pos === -1 || pos >= activeList.length - 1);
   }
 
   function toggleIngredientCheck(cb, idx) {
@@ -1754,7 +2045,8 @@
   }
 
   function renderSteps() {
-    const r = RECIPES[currentRecipeIndex] || RECIPES[0];
+    if (currentRecipeIndex === null) return;
+    const r = RECIPES[currentRecipeIndex];
     if (!r) return;
     const steps = r.steps && r.steps.length ? r.steps : ["Follow traditional preparation instructions."];
     const totalStepPages = Math.max(1, Math.ceil(steps.length / STEPS_PER_PAGE));
@@ -1788,6 +2080,7 @@
   }
 
   function changeStepPage(delta) {
+    if (currentRecipeIndex === null) return;
     const r = RECIPES[currentRecipeIndex];
     if (!r) return;
     const steps = r.steps || [];
@@ -1797,6 +2090,14 @@
   }
 
   function rateActiveRecipe(stars) {
+    if (currentRecipeIndex === null) {
+      const msg = document.getElementById('ratedMessage');
+      if (msg) {
+        msg.innerText = 'Select a recipe first!';
+        setTimeout(() => { msg.innerText = ''; }, 2000);
+      }
+      return;
+    }
     const r = RECIPES[currentRecipeIndex];
     if (!r) return;
     ratingsMap[r.id] = stars;
@@ -1806,8 +2107,11 @@
     updateStarDisplay(stars);
     const msg = document.getElementById('ratedMessage');
     if (msg) {
-      msg.innerText = `Saved ${stars}★!`;
+      msg.innerText = `Saved ${stars}★ to Diary!`;
       setTimeout(() => { msg.innerText = ''; }, 2000);
+    }
+    if (activeTab === 'diary') {
+      renderDiary();
     }
   }
 

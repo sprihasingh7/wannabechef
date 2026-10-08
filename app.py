@@ -18,16 +18,27 @@ st.set_page_config(
 # Hide Streamlit UI Chrome & ensure zero outer scrollbars
 st.markdown("""
 <style>
-    /* Hide all Streamlit chrome & decorations */
-    header, footer, #MainMenu, 
+    /* Completely eliminate all Streamlit header, toolbar, status & decorations */
+    header,
+    [data-testid="stHeader"],
+    header[data-testid="stHeader"],
+    footer,
+    #MainMenu, 
     [data-testid="stToolbar"], 
     [data-testid="stDecoration"], 
-    [data-testid="stStatusWidget"] {
+    [data-testid="stStatusWidget"],
+    div[data-testid="stStatusWidget"] {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
+        max-height: 0 !important;
+        min-height: 0 !important;
+        width: 0 !important;
         margin: 0 !important;
         padding: 0 !important;
+        position: absolute !important;
+        pointer-events: none !important;
+        border: none !important;
     }
     
     /* Cozy warm rustic kitchen dining table background */
@@ -47,18 +58,33 @@ st.markdown("""
         padding: 0 !important;
     }
 
-    section.main {
+    [data-testid="stAppViewContainer"],
+    [data-testid="stMain"],
+    section.main,
+    .stMain {
         padding: 0 !important;
         margin: 0 !important;
+        width: 100vw !important;
         height: 100vh !important;
         height: 100dvh !important;
         max-height: 100vh !important;
         max-height: 100dvh !important;
         overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
-    .block-container {
+    [data-testid="stMainBlockContainer"],
+    .block-container,
+    .stMainBlockContainer,
+    [data-testid="stAppViewBlockContainer"] {
         padding: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
         margin: 0 auto !important;
         max-width: 100vw !important;
         width: 100vw !important;
@@ -68,19 +94,23 @@ st.markdown("""
         max-height: 100dvh !important;
         overflow: hidden !important;
         display: flex !important;
+        flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
     }
 
+    div[data-testid="stVerticalBlock"],
+    div[data-testid="stVerticalBlockBorderWrapper"],
+    div[data-testid="element-container"],
     div[data-testid="stCustomComponentV1"] {
+        padding: 0 !important;
+        margin: 0 !important;
         width: 100% !important;
-        height: 100vh !important;
-        height: 100dvh !important;
-        max-height: 100vh !important;
-        max-height: 100dvh !important;
+        height: 100% !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        gap: 0 !important;
     }
 
     iframe {
@@ -147,4 +177,4 @@ flipbook_html = html_template.replace(
     f"let RECIPES = {recipes_json_str};"
 )
 
-components.html(flipbook_html, height=480, scrolling=False)
+components.html(flipbook_html, height=520, scrolling=False)
