@@ -47,6 +47,21 @@ st.markdown("""
         overflow: hidden !important;
         display: block !important;
         margin: 0 auto !important;
+        width: 100% !important;
+    }
+
+    @media (max-width: 820px) {
+        .block-container {
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: 100vw !important;
+            width: 100vw !important;
+        }
+        iframe {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            height: 700px !important;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -100,4 +115,4 @@ flipbook_html = html_template.replace(
     f"let RECIPES = {recipes_json_str};"
 )
 
-components.html(flipbook_html, height=720, scrolling=False)
+components.html(flipbook_html, height=700, scrolling=False)
