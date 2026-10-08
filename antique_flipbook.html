@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WannabeChef</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Marcellus+SC&family=Patrick+Hand&family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  body {
+    background: transparent;
+    font-family: 'Quicksand', sans-serif;
+    color: #2F2119;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Table Stage */
+  .table-stage {
+    position: relative;
+    width: 100%;
+    max-width: 1180px;
+    height: 680px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 2400px;
+  }
+
+  /* ========================================================= */
+  /* CLOSED BOOK STATE (ANTIQUE LEATHER COVER WITH BRASS)      */
+  /* ========================================================= */
+  .closed-book-wrapper {
+    position: absolute;
+    width: 500px;
+    height: 640px;
+    transform-style: preserve-3d;
+    transition: transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.4s ease;
+    cursor: pointer;
+    z-index: 50;
+  }
+
+  .closed-book-wrapper.hidden {
+    transform: perspective(2200px) rotateY(-130deg) scale(0.92);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .closed-book-cover {
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 50% 30%, #68371c 0%, #421e0e 70%, #250f05 100%);
+    border-radius: 12px 24px 24px 12px;
+    border: 4px solid #200d04;
+    border-left: 26px solid #160702; /* Heavy leather spine */
+    box-shadow: 
+      -10px 0 25px rgba(0,0,0,0.8),
+      15px 25px 50px rgba(10, 5, 2, 0.7),
+      inset 0 0 40px rgba(0,0,0,0.6);
+    position: relative;
+    padding: 30px 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Brass Ornaments */
+  .brass-corner {
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    background: radial-gradient(circle, #fae4a2 20%, #d4af37 60%, #87681c 100%);
+    border: 2px solid #4a3809;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+    z-index: 5;
+  }
+  .brass-corner.tl { top: 8px; left: 8px; border-radius: 8px 0 32px 0; }
+  .brass-corner.tr { top: 8px; right: 8px; border-radius: 0 16px 0 32px; }
+  .brass-corner.bl { bottom: 8px; left: 8px; border-radius: 0 32px 0 8px; }
+  .brass-corner.br { bottom: 8px; right: 8px; border-radius: 32px 0 16px 0; }
+
+  .cover-emboss-border {
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    border: 2px solid rgba(212, 175, 55, 0.65);
+    outline: 1px dashed rgba(249, 226, 157, 0.45);
+    outline-offset: -6px;
+    border-radius: 8px;
+    pointer-events: none;
+  }
+
+  .closed-ribbon-tail {
+    position: absolute;
+    bottom: -32px;
+    right: 110px;
+    width: 30px;
+    height: 65px;
+    background: linear-gradient(135deg, #1b5e20, #2e7d32 60%, #144618);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.6);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+    z-index: 2;
+  }
+
+  .cover-filigree {
+    font-size: 26px;
+    color: #e6ca65;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    margin-top: 15px;
+  }
+
+  .cover-sub-title {
+    font-family: 'Marcellus SC', serif;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: #dfba63;
+    text-transform: uppercase;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    margin-bottom: 6px;
+  }
+
+  .cover-main-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: #FFF2DF;
+    text-shadow: 0 3px 10px rgba(0,0,0,0.9), 0 0 20px rgba(230, 202, 101, 0.4);
+    letter-spacing: 1px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  .cover-tagline {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 18px;
+    color: #edd18e;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+    max-width: 320px;
+    line-height: 1.3;
+  }
+
+  .cover-illustration {
+    font-size: 52px;
+    margin: 10px 0;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+    animation: gentlePulse 3s infinite ease-in-out;
+  }
+
+  @keyframes gentlePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+
+  .btn-open-book {
+    background: linear-gradient(180deg, #E5A93B 0%, #B8731F 100%);
+    color: #261305;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 12px 28px;
+    border: 2px solid #FFF1C5;
+    border-radius: 30px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-bottom: 20px;
+  }
+
+  .btn-open-book:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.6), inset 0 1px 3px rgba(255,255,255,0.8);
+    background: linear-gradient(180deg, #F0B84D 0%, #C98227 100%);
+  }
+
+  .closed-book-pages-side {
+    position: absolute;
+    right: -16px;
+    top: 14px;
+    bottom: 14px;
+    width: 16px;
+    background: repeating-linear-gradient(
+      180deg,
+      #FDF8EE 0px,
+      #FDF8EE 2px,
+      #DECCA9 3px,
+      #BCA57D 4px
+    );
+    border-radius: 0 6px 6px 0;
+    box-shadow: 3px 5px 12px rgba(0,0,0,0.5);
+    border: 1px solid #755B3F;
+    border-left: none;
+  }
+
+  /* ========================================================= */
+  /* OPEN BOOK SPREAD (THE PHYSICAL TWO-PAGE ANTIQUE BOOK)     */
+  /* ========================================================= */
+  .open-book-wrapper {
+    position: relative;
+    width: 1140px;
+    height: 660px;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.5s ease;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.94);
+  }
+
+  .open-book-wrapper.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+  }
+
+  /* Hardcover Base Outline */
+  .book-hardcover-base {
+    position: absolute;
+    top: -12px;
+    bottom: -12px;
+    left: -18px;
+    right: -18px;
+    background: 
+      radial-gradient(circle at 50% 50%, #4D2614 0%, #36170A 80%, #1E0A03 100%);
+    border-radius: 20px;
+    box-shadow: 
+      0 35px 80px rgba(18, 8, 3, 0.8),
+      0 12px 30px rgba(0, 0, 0, 0.6);
+    border: 3px solid #160702;
+  }
+
+  .leather-stitched-border {
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: 8px;
+    right: 8px;
+    border: 2px dashed rgba(212, 175, 55, 0.4);
+    border-radius: 14px;
+    pointer-events: none;
+  }
+
+  .stacked-edge {
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    width: 14px;
+    background: repeating-linear-gradient(
+      180deg,
+      #FFFDF7 0px,
+      #FFFDF7 2px,
+      #E7D5B8 3px,
+      #C6AE88 4px
+    );
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.25);
+    z-index: 2;
+  }
+  .stacked-edge.left {
+    left: -14px;
+    border-radius: 8px 0 0 8px;
+    border: 1px solid #997E5C;
+    border-right: none;
+  }
+  .stacked-edge.right {
+    right: -14px;
+    border-radius: 0 8px 8px 0;
+    border: 1px solid #997E5C;
+    border-left: none;
+  }
+
+  .bookmark-ribbon {
+    position: absolute;
+    top: -24px;
+    left: 49%;
+    width: 24px;
+    height: 700px;
+    background: linear-gradient(90deg, #1b5e20, #2e7d32 50%, #144618 100%);
+    box-shadow: 3px 0 10px rgba(0,0,0,0.4);
+    pointer-events: none;
+    z-index: 15;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 97%, 0 100%);
+    opacity: 0.85;
+  }
+
+  /* Spread */
+  .book-spread {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    background: #F8EFE1;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: inset 0 0 35px rgba(110, 75, 40, 0.25);
+    z-index: 3;
+  }
+
+  .spine-gutter-shadow {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 48px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+      to right,
+      rgba(50, 25, 10, 0.28) 0%,
+      rgba(50, 25, 10, 0.08) 35%,
+      rgba(50, 25, 10, 0.35) 50%,
+      rgba(50, 25, 10, 0.08) 65%,
+      rgba(50, 25, 10, 0.28) 100%
+    );
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* ========================================================= */
+  /* INDIVIDUAL PAGES (NO VERTICAL SCROLLING)                  */
+  /* ========================================================= */
+  .book-page {
+    width: 50%;
+    height: 100%;
+    padding: 16px 22px 12px 22px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden; /* STRICTLY ZERO FULL-PAGE SCROLL */
+  }
+
+  .book-page.left {
+    background: 
+      radial-gradient(circle at 15% 25%, #FFFDF9 0%, transparent 65%),
+      linear-gradient(to right, #FBF4E9 88%, #E9DBC6 100%);
+    border-right: 1px solid #D8C3A7;
+    box-shadow: inset -15px 0 20px -8px rgba(70, 40, 20, 0.12);
+  }
+
+  .book-page.right {
+    background: 
+      radial-gradient(circle at 85% 25%, #FFFDF9 0%, transparent 65%),
+      linear-gradient(to left, #FBF4E9 88%, #E9DBC6 100%);
+    box-shadow: inset 15px 0 20px -8px rgba(70, 40, 20, 0.12);
+  }
+
+  /* ========================================================= */
+  /* 3D ANIMATED FLIPPING SHEET                                */
+  /* ========================================================= */
+  .flipping-sheet {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    transform-style: preserve-3d;
+    pointer-events: none;
+    z-index: 30;
+    display: none;
+  }
+
+  .flipping-sheet.flip-forward {
+    display: block;
+    right: 0;
+    transform-origin: left center;
+    animation: pageTurnForward 0.75s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .flipping-sheet.flip-backward {
+    display: block;
+    left: 0;
+    transform-origin: right center;
+    animation: pageTurnBackward 0.75s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes pageTurnForward {
+    0% {
+      transform: perspective(2000px) rotateY(0deg);
+      box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+    }
+    50% {
+      box-shadow: -20px 0 40px rgba(0,0,0,0.35);
+    }
+    100% {
+      transform: perspective(2000px) rotateY(-180deg);
+      box-shadow: 5px 0 25px rgba(0,0,0,0.1);
+    }
+  }
+
+  @keyframes pageTurnBackward {
+    0% {
+      transform: perspective(2000px) rotateY(0deg);
+      box-shadow: 5px 0 25px rgba(0,0,0,0.1);
+    }
+    50% {
+      box-shadow: 20px 0 40px rgba(0,0,0,0.35);
+    }
+    100% {
+      transform: perspective(2000px) rotateY(180deg);
+      box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+    }
+  }
+
+  .sheet-side {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    background: #FAF2E6;
+    border: 1px solid #D6C2A5;
+  }
+  .sheet-side.front {
+    background: linear-gradient(to left, #FBF4E9 85%, #E5D5BD 100%);
+  }
+  .sheet-side.back {
+    transform: rotateY(180deg);
+    background: linear-gradient(to right, #FBF4E9 85%, #E5D5BD 100%);
+  }
+
+  /* ========================================================= */
+  /* LEFT PAGE TABS & VIEWS                                    */
+  /* ========================================================= */
+  .left-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1.5px dashed #D6C0A6;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+
+  .bookmark-tabs {
+    display: flex;
+    gap: 6px;
+  }
+
+  .bookmark-tab {
+    background: #EEDEC9;
+    color: #69452F;
+    border: 1px solid #CDB596;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 14px;
+    padding: 3px 10px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .bookmark-tab:hover {
+    background: #F4E8D7;
+  }
+  .bookmark-tab.active {
+    background: #FBF4E9;
+    color: #9C3D18;
+    font-weight: 700;
+    border-bottom: 1px solid #FBF4E9;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.06);
+  }
+
+  .btn-close-book {
+    background: #7E3821;
+    color: #FFF2DF;
+    border: 1px solid #5C2513;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-close-book:hover {
+    background: #9E4528;
+    transform: scale(1.05);
+  }
+
+  .chapter-chips-wrap {
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    margin-bottom: 6px;
+    scrollbar-width: none;
+  }
+  .chapter-chips-wrap::-webkit-scrollbar { display: none; }
+
+  .chapter-chip {
+    white-space: nowrap;
+    background: #FFFFFF;
+    border: 1px solid #E2D1BD;
+    color: #5C3D2B;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .chapter-chip:hover {
+    border-color: #D95D39;
+    color: #D95D39;
+  }
+  .chapter-chip.active {
+    background: #D95D39;
+    color: #FFFFFF;
+    border-color: #B54728;
+    box-shadow: 0 2px 6px rgba(217, 93, 57, 0.3);
+  }
+
+  .index-search-bar {
+    display: flex;
+    align-items: center;
+    background: #FFFFFF;
+    border: 1px solid #D8C3A9;
+    border-radius: 14px;
+    padding: 4px 8px;
+    margin-bottom: 8px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .index-search-bar input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 12px;
+    color: #38241B;
+    background: transparent;
+    padding-left: 6px;
+  }
+
+  .index-recipe-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    height: 385px;
+  }
+
+  .index-recipe-row {
+    background: #FFFFFF;
+    border: 1px solid #EADDCF;
+    border-radius: 8px;
+    padding: 7px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  .index-recipe-row:hover {
+    border-color: #D95D39;
+    background: #FFFDF9;
+    transform: translateX(3px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .index-recipe-row.selected {
+    border: 1.5px solid #D95D39;
+    background: #FFF8F2;
+  }
+
+  .row-meta-left {
+    display: flex;
+    flex-direction: column;
+    max-width: 340px;
+  }
+  .row-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #38241B;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .row-sub {
+    font-size: 11px;
+    color: #8C6A53;
+    font-family: 'Patrick Hand', cursive;
+  }
+
+  .row-btn-read {
+    background: #FFF2DF;
+    border: 1px solid #D95D39;
+    color: #D95D39;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .row-btn-read:hover {
+    background: #D95D39;
+    color: #FFFFFF;
+  }
+
+  .left-page-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px dashed #DCC8B0;
+    padding-top: 6px;
+    margin-top: 4px;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 14px;
+    color: #7A5B45;
+  }
+
+  .btn-page-nav {
+    background: #FFFFFF;
+    border: 1px solid #CDB295;
+    color: #634330;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .btn-page-nav:hover:not(:disabled) {
+    background: #D95D39;
+    color: #FFFFFF;
+    border-color: #D95D39;
+  }
+  .btn-page-nav:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  /* Pantry Inspires */
+  .pantry-inspire-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+  .pantry-inspire-chip {
+    background: #FFFDF9;
+    border: 1px solid #E0CEBA;
+    color: #5C3825;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .pantry-inspire-chip:hover {
+    border-color: #D95D39;
+    color: #D95D39;
+  }
+
+  /* ========================================================= */
+  /* RIGHT PAGE (ACTIVE RECIPE)                                */
+  /* ========================================================= */
+  .washi-tape-strip {
+    width: 80px;
+    height: 16px;
+    background: rgba(255, 175, 189, 0.7);
+    margin: -6px auto 4px auto;
+    transform: rotate(-1.5deg);
+    border-left: 2px dashed rgba(255,255,255,0.7);
+    border-right: 2px dashed rgba(255,255,255,0.7);
+  }
+
+  .recipe-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    color: #8C6A53;
+    letter-spacing: 1px;
+  }
+
+  .recipe-main-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #38241B;
+    text-align: center;
+    line-height: 1.2;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Hero: Photo & Stats */
+  .recipe-hero-box {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 10px;
+    background: #FFFDF9;
+    border: 1px solid #EADBCE;
+    border-radius: 10px;
+    padding: 6px 8px;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+
+  .recipe-hero-box img {
+    width: 130px;
+    height: 88px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #D6C2A5;
+  }
+
+  .hero-stats-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .stats-badges-line {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  .badge-chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: #F4EAE0;
+    color: #5C3825;
+  }
+
+  .wax-seal-pill {
+    display: inline-block;
+    border: 1.5px dashed #D95D39;
+    background: #FFF5EE;
+    color: #B54728;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 10px;
+    width: fit-content;
+  }
+
+  .macro-nutrition-bar {
+    font-size: 11px;
+    color: #7A5B45;
+  }
+  .macro-nutrition-bar strong {
+    color: #38241B;
+  }
+
+  /* Split Details Grid */
+  .recipe-details-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 10px;
+    height: 335px;
+    overflow: hidden;
+  }
+
+  .detail-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .panel-title {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 14px;
+    font-weight: 700;
+    color: #5C3825;
+    margin-bottom: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Ingredients checklist */
+  .ingredients-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    background: #FFFFFF;
+    border: 1px solid #EBDCCF;
+    border-radius: 6px;
+    padding: 5px 7px;
+    height: 300px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  .ing-check-item {
+    font-size: 11px;
+    color: #38241B;
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    line-height: 1.25;
+  }
+  .ing-check-item input {
+    margin-top: 2px;
+    accent-color: #D95D39;
+    cursor: pointer;
+  }
+  .ing-check-item.checked span {
+    text-decoration: line-through;
+    opacity: 0.55;
+  }
+
+  /* Steps display */
+  .steps-display-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .step-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    height: 265px;
+    overflow: hidden;
+  }
+
+  .step-card-box {
+    background: #FFFDF9;
+    border-left: 3px solid #D95D39;
+    border-top: 1px solid #F3E7DC;
+    border-right: 1px solid #F3E7DC;
+    border-bottom: 1px solid #F3E7DC;
+    border-radius: 0 6px 6px 0;
+    padding: 5px 8px;
+    font-size: 11.5px;
+    line-height: 1.35;
+    color: #38241B;
+  }
+  .step-card-box strong {
+    color: #D95D39;
+  }
+
+  .step-pagination-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+    color: #8C6A53;
+    padding-top: 3px;
+  }
+  .btn-step-flip {
+    background: #FFF2DF;
+    border: 1px solid #CDB295;
+    color: #7E3D21;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .btn-step-flip:hover:not(:disabled) {
+    background: #D95D39;
+    color: #FFFFFF;
+  }
+  .btn-step-flip:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* Right Page Footer */
+  .right-page-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px dashed #DCC8B0;
+    padding-top: 6px;
+    margin-top: 4px;
+  }
+
+  .star-rating-box {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .star-rating-box .star {
+    font-size: 17px;
+    color: #D1B898;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+  .star-rating-box .star.active {
+    color: #E5A93B;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  .page-turn-buttons {
+    display: flex;
+    gap: 6px;
+  }
+  .btn-turn-recipe {
+    background: #FFFFFF;
+    border: 1.5px solid #D95D39;
+    color: #D95D39;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 2px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-turn-recipe.primary {
+    background: #D95D39;
+    color: #FFFFFF;
+  }
+  .btn-turn-recipe:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+  }
+  .btn-turn-recipe:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+</style>
+</head>
+<body>
+
+<div class="table-stage">
+  <!-- 1. CLOSED BOOK -->
+  <div id="closedBook" class="closed-book-wrapper" onclick="openBook()">
+    <div class="closed-book-cover">
+      <div class="brass-corner tl"></div>
+      <div class="brass-corner tr"></div>
+      <div class="brass-corner bl"></div>
+      <div class="brass-corner br"></div>
+      <div class="cover-emboss-border"></div>
+      <div class="closed-ribbon-tail"></div>
+      <div class="closed-book-pages-side"></div>
+
+      <div class="cover-filigree">❦ ❧</div>
+      <div class="cover-sub-title">Antique Fairytale Collection</div>
+      <h1 class="cover-main-title">WannabeChef</h1>
+      <div class="cover-illustration">🍲</div>
+      <p class="cover-tagline">Secret recipes, cozy spices, & heirloom culinary tales.</p>
+
+      <button class="btn-open-book">📖 Open Recipe Book ✨</button>
+
+      <div style="font-family:'Patrick Hand', cursive; font-size:14px; color:#c79e60;">
+        Click anywhere to flip open
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. OPEN TWO-PAGE SPREAD -->
+  <div id="openBook" class="open-book-wrapper">
+    <!-- Underlay Hardcover Base -->
+    <div class="book-hardcover-base">
+      <div class="leather-stitched-border"></div>
+      <div class="brass-corner tl"></div>
+      <div class="brass-corner tr"></div>
+      <div class="brass-corner bl"></div>
+      <div class="brass-corner br"></div>
+    </div>
+
+    <!-- Paper thickness sides & ribbon -->
+    <div class="stacked-edge left"></div>
+    <div class="stacked-edge right"></div>
+    <div class="bookmark-ribbon"></div>
+
+    <div class="book-spread">
+      <div class="spine-gutter-shadow"></div>
+
+      <!-- LEFT PAGE -->
+      <div class="book-page left">
+        <div>
+          <div class="left-top-bar">
+            <div class="bookmark-tabs">
+              <button class="bookmark-tab active" id="tabBtnIndex" onclick="switchTab('index')">📑 Index</button>
+              <button class="bookmark-tab" id="tabBtnPantry" onclick="switchTab('pantry')">🧺 Pantry</button>
+              <button class="bookmark-tab" id="tabBtnDiary" onclick="switchTab('diary')">⭐ Diary</button>
+            </div>
+            <button class="btn-close-book" onclick="closeBook()" title="Close Book Cover">📕 Close Book</button>
+          </div>
+
+          <!-- TAB 1: INDEX -->
+          <div id="tabContentIndex">
+            <div class="chapter-chips-wrap" id="chapterChipsList"></div>
+            <div class="index-search-bar">
+              <span>🔍</span>
+              <input type="text" id="searchInput" placeholder="Search dish e.g. Paneer, Biryani, Pasta..." oninput="onSearchChange(this.value)">
+            </div>
+            <div class="index-recipe-list" id="indexRecipeList"></div>
+          </div>
+
+          <!-- TAB 2: PANTRY -->
+          <div id="tabContentPantry" style="display:none;">
+            <div style="font-family:'Patrick Hand', cursive; font-size:14px; color:#5C3825; font-weight:700; margin-bottom:4px;">
+              ✨ Quick Pantry Ideas:
+            </div>
+            <div class="pantry-inspire-chips">
+              <button class="pantry-inspire-chip" onclick="setPantrySearch('chicken, tomato, garlic, onion')">🍗 Butter Chicken</button>
+              <button class="pantry-inspire-chip" onclick="setPantrySearch('paneer, bell pepper, onion, yogurt')">🧀 Paneer Tikka</button>
+              <button class="pantry-inspire-chip" onclick="setPantrySearch('pasta, garlic, olive oil, chilli')">🍝 Aglio Olio</button>
+              <button class="pantry-inspire-chip" onclick="setPantrySearch('milk, sugar, cardamom, rice')">🧁 Kheer</button>
+            </div>
+            <div class="index-search-bar">
+              <span>🧺</span>
+              <input type="text" id="pantryInput" placeholder="Enter ingredients separated by commas..." oninput="onPantryChange(this.value)">
+            </div>
+            <div class="index-recipe-list" id="pantryRecipeList"></div>
+          </div>
+
+          <!-- TAB 3: DIARY -->
+          <div id="tabContentDiary" style="display:none;">
+            <div style="font-family:'Patrick Hand', cursive; font-size:15px; color:#5C3825; font-weight:700; margin-bottom:6px;">
+              ⭐ Your Tested & Rated Recipes:
+            </div>
+            <div class="index-recipe-list" id="diaryRecipeList"></div>
+          </div>
+        </div>
+
+        <!-- Left Page Footer -->
+        <div class="left-page-footer">
+          <button class="btn-page-nav" id="btnIndexPrev" onclick="changeIndexPage(-1)">◀ Prev</button>
+          <span id="indexPageLabel">Page 1 of 1</span>
+          <button class="btn-page-nav" id="btnIndexNext" onclick="changeIndexPage(1)">Next ▶</button>
+        </div>
+      </div>
+
+      <!-- RIGHT PAGE -->
+      <div class="book-page right">
+        <div>
+          <div class="washi-tape-strip"></div>
+          <div class="recipe-header-row">
+            <span id="recCuisineCourse">✨ NORTH INDIAN • MAIN COURSE</span>
+            <span id="recPageNumTag">RECIPE #1</span>
+          </div>
+
+          <h2 class="recipe-main-title" id="recTitle">Shahi Paneer Royale</h2>
+
+          <!-- Hero: Photo & Stats -->
+          <div class="recipe-hero-box">
+            <img id="recImg" src="" alt="Recipe Photo" onerror="this.src='https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=500&q=80'">
+            <div class="hero-stats-content">
+              <div class="stats-badges-line">
+                <span class="badge-chip" id="recTime">⏱️ 35m</span>
+                <span class="badge-chip" id="recServings">👥 4 Servings</span>
+              </div>
+              <div class="wax-seal-pill" id="recSeal">🏅 Golden Wholesome</div>
+              <div class="macro-nutrition-bar" id="recMacros">
+                🔥 <strong>280</strong> kcal • 🍗 <strong>14g</strong> P • 🥑 <strong>12g</strong> F
+              </div>
+            </div>
+          </div>
+
+          <!-- Details: Ingredients & Steps -->
+          <div class="recipe-details-grid">
+            <!-- Left: Ingredients -->
+            <div class="detail-panel">
+              <div class="panel-title">
+                <span>🧂 Ingredients</span>
+                <span id="ingCountTag" style="font-size:12px; color:#8C6A53;">(8)</span>
+              </div>
+              <div class="ingredients-checklist" id="recIngredientsList"></div>
+            </div>
+
+            <!-- Right: Steps -->
+            <div class="detail-panel">
+              <div class="steps-display-wrap">
+                <div>
+                  <div class="panel-title">
+                    <span>🍳 Method</span>
+                    <span id="stepRangeTag" style="font-size:12px; color:#8C6A53;">Steps 1-3</span>
+                  </div>
+                  <div class="step-cards-list" id="recStepsList"></div>
+                </div>
+                <div class="step-pagination-bar">
+                  <button class="btn-step-flip" id="btnStepPrev" onclick="changeStepPage(-1)">◀ Earlier</button>
+                  <span id="stepPageIndicator">1 / 2</span>
+                  <button class="btn-step-flip" id="btnStepNext" onclick="changeStepPage(1)">Later ▶</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Page Footer -->
+        <div class="right-page-footer">
+          <div class="star-rating-box">
+            <span style="font-family:'Patrick Hand', cursive; font-size:13px; color:#7A5B45;">Tasting:</span>
+            <span class="star" onclick="rateActiveRecipe(1)">★</span>
+            <span class="star" onclick="rateActiveRecipe(2)">★</span>
+            <span class="star" onclick="rateActiveRecipe(3)">★</span>
+            <span class="star" onclick="rateActiveRecipe(4)">★</span>
+            <span class="star" onclick="rateActiveRecipe(5)">★</span>
+            <span id="ratedMessage" style="font-size:11px; color:#2e7d32; margin-left:4px; font-weight:600;"></span>
+          </div>
+          <div class="page-turn-buttons">
+            <button class="btn-turn-recipe" id="btnPrevRecipe" onclick="navigateRecipe(-1)">◀ Prev</button>
+            <button class="btn-turn-recipe primary" id="btnNextRecipe" onclick="navigateRecipe(1)">Next ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3D FLIPPING SHEET -->
+      <div id="flippingSheet" class="flipping-sheet">
+        <div class="sheet-side front"></div>
+        <div class="sheet-side back"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* RECIPES_JSON_PLACEHOLDER */
+  let currentRecipeIndex = 0;
+  let activeTab = 'index';
+  let activeChapter = 'All';
+  let currentSearchQuery = '';
+  let currentPantryQuery = '';
+  let indexCurrentPage = 0;
+  const INDEX_PER_PAGE = 5;
+  let stepCurrentPage = 0;
+  const STEPS_PER_PAGE = 3;
+  let ratingsMap = {};
+
+  try {
+    const saved = localStorage.getItem('wannabechef_ratings');
+    if (saved) ratingsMap = JSON.parse(saved);
+  } catch(e) {}
+
+  function openBook() {
+    const closed = document.getElementById('closedBook');
+    const open = document.getElementById('openBook');
+    closed.classList.add('hidden');
+    setTimeout(() => {
+      open.classList.add('visible');
+    }, 380);
+  }
+
+  function closeBook() {
+    const closed = document.getElementById('closedBook');
+    const open = document.getElementById('openBook');
+    open.classList.remove('visible');
+    setTimeout(() => {
+      closed.classList.remove('hidden');
+    }, 420);
+  }
+
+  function triggerPageTurnAnimation(direction, callback) {
+    const sheet = document.getElementById('flippingSheet');
+    sheet.className = 'flipping-sheet ' + (direction > 0 ? 'flip-forward' : 'flip-backward');
+    setTimeout(() => {
+      if (callback) callback();
+    }, 350);
+    setTimeout(() => {
+      sheet.className = 'flipping-sheet';
+    }, 750);
+  }
+
+  function switchTab(tab) {
+    activeTab = tab;
+    document.querySelectorAll('.bookmark-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+
+    document.getElementById('tabContentIndex').style.display = tab === 'index' ? 'block' : 'none';
+    document.getElementById('tabContentPantry').style.display = tab === 'pantry' ? 'block' : 'none';
+    document.getElementById('tabContentDiary').style.display = tab === 'diary' ? 'block' : 'none';
+
+    if (tab === 'diary') renderDiary();
+    if (tab === 'pantry') onPantryChange(document.getElementById('pantryInput').value || 'chicken, onion');
+    updateIndexPagination();
+  }
+
+  function initApp() {
+    renderChapters();
+    renderIndex();
+    renderActiveRecipe();
+  }
+
+  function renderChapters() {
+    const cuisines = ['All'];
+    const seen = new Set();
+    RECIPES.forEach(r => {
+      if (r.cuisine && !seen.has(r.cuisine)) {
+        seen.add(r.cuisine);
+        cuisines.push(r.cuisine);
+      }
+    });
+
+    const wrap = document.getElementById('chapterChipsList');
+    wrap.innerHTML = cuisines.slice(0, 11).map(c => 
+      `<button class="chapter-chip ${c === activeChapter ? 'active' : ''}" onclick="selectChapter('${c}')">${c}</button>`
+    ).join('');
+  }
+
+  function selectChapter(c) {
+    activeChapter = c;
+    indexCurrentPage = 0;
+    renderChapters();
+    renderIndex();
+  }
+
+  function onSearchChange(val) {
+    currentSearchQuery = val.toLowerCase().trim();
+    indexCurrentPage = 0;
+    renderIndex();
+  }
+
+  function getFilteredRecipes() {
+    return RECIPES.filter(r => {
+      const matchChap = (activeChapter === 'All' || r.cuisine === activeChapter);
+      const matchSearch = !currentSearchQuery || 
+        r.title.toLowerCase().includes(currentSearchQuery) || 
+        (r.ingredients && r.ingredients.some(i => i.toLowerCase().includes(currentSearchQuery)));
+      return matchChap && matchSearch;
+    });
+  }
+
+  function renderIndex() {
+    const list = getFilteredRecipes();
+    const totalPages = Math.max(1, Math.ceil(list.length / INDEX_PER_PAGE));
+    indexCurrentPage = Math.min(indexCurrentPage, totalPages - 1);
+
+    const start = indexCurrentPage * INDEX_PER_PAGE;
+    const pageItems = list.slice(start, start + INDEX_PER_PAGE);
+
+    const container = document.getElementById('indexRecipeList');
+    if (pageItems.length === 0) {
+      container.innerHTML = '<div style="font-family:Patrick Hand, cursive; font-size:14px; color:#8C6A53; text-align:center; padding-top:40px;">No recipes found in this chapter. Try another search!</div>';
+    } else {
+      container.innerHTML = pageItems.map(r => {
+        const isSel = r.id === RECIPES[currentRecipeIndex]?.id;
+        return `
+          <div class="index-recipe-row ${isSel ? 'selected' : ''}" onclick="selectRecipeById(${r.id})">
+            <div class="row-meta-left">
+              <span class="row-title">${r.title}</span>
+              <span class="row-sub">⏱️ ${r.time}m • ${r.cuisine}</span>
+            </div>
+            <button class="row-btn-read">📖 Read</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    updateIndexPagination();
+  }
+
+  function updateIndexPagination() {
+    const list = getFilteredRecipes();
+    const totalPages = Math.max(1, Math.ceil(list.length / INDEX_PER_PAGE));
+    document.getElementById('indexPageLabel').innerText = `Page ${indexCurrentPage + 1} of ${totalPages}`;
+    document.getElementById('btnIndexPrev').disabled = (indexCurrentPage === 0);
+    document.getElementById('btnIndexNext').disabled = (indexCurrentPage >= totalPages - 1);
+  }
+
+  function changeIndexPage(delta) {
+    const list = getFilteredRecipes();
+    const totalPages = Math.max(1, Math.ceil(list.length / INDEX_PER_PAGE));
+    indexCurrentPage = Math.max(0, Math.min(totalPages - 1, indexCurrentPage + delta));
+    renderIndex();
+  }
+
+  function selectRecipeById(id) {
+    const idx = RECIPES.findIndex(r => r.id === id);
+    if (idx !== -1 && idx !== currentRecipeIndex) {
+      triggerPageTurnAnimation(1, () => {
+        currentRecipeIndex = idx;
+        stepCurrentPage = 0;
+        renderActiveRecipe();
+        renderIndex();
+      });
+    }
+  }
+
+  function navigateRecipe(delta) {
+    const newIdx = currentRecipeIndex + delta;
+    if (newIdx >= 0 && newIdx < RECIPES.length) {
+      triggerPageTurnAnimation(delta, () => {
+        currentRecipeIndex = newIdx;
+        stepCurrentPage = 0;
+        renderActiveRecipe();
+        renderIndex();
+      });
+    }
+  }
+
+  function renderActiveRecipe() {
+    if (!RECIPES.length) return;
+    const r = RECIPES[currentRecipeIndex];
+
+    document.getElementById('recCuisineCourse').innerText = `✨ ${(r.cuisine || 'SPECIALTY').toUpperCase()} • ${(r.course || 'DELICACY').toUpperCase()}`;
+    document.getElementById('recPageNumTag').innerText = `RECIPE #${r.id + 1}`;
+    document.getElementById('recTitle').innerText = r.title;
+    document.getElementById('recImg').src = r.image;
+    document.getElementById('recTime').innerText = `⏱️ ${r.time}m`;
+    document.getElementById('recServings').innerText = `👥 ${r.servings} Servings`;
+    document.getElementById('recSeal').innerText = `🏅 ${r.seal || 'Golden Wholesome'}`;
+
+    const nut = r.nutrition || {};
+    document.getElementById('recMacros').innerHTML = `
+      🔥 <strong>${Math.round(nut.calories || 250)}</strong> kcal • 
+      🍗 <strong>${(nut.protein || 10).toFixed(1)}g</strong> P • 
+      🥑 <strong>${(nut.fat || 8).toFixed(1)}g</strong> F
+    `;
+
+    // Ingredients checklist
+    const ings = r.ingredients || [];
+    document.getElementById('ingCountTag').innerText = `(${ings.length})`;
+    document.getElementById('recIngredientsList').innerHTML = ings.map((ing, i) => `
+      <label class="ing-check-item" id="label_chk_${i}">
+        <input type="checkbox" onchange="toggleIngredientCheck(this, ${i})">
+        <span>${ing}</span>
+      </label>
+    `).join('');
+
+    renderSteps();
+    updateStarDisplay(ratingsMap[r.id] || 0);
+
+    document.getElementById('btnPrevRecipe').disabled = (currentRecipeIndex === 0);
+    document.getElementById('btnNextRecipe').disabled = (currentRecipeIndex >= RECIPES.length - 1);
+  }
+
+  function toggleIngredientCheck(cb, idx) {
+    const label = document.getElementById('label_chk_' + idx);
+    if (cb.checked) label.classList.add('checked');
+    else label.classList.remove('checked');
+  }
+
+  function renderSteps() {
+    const r = RECIPES[currentRecipeIndex];
+    const steps = r.steps || ["Follow traditional preparation instructions."];
+    const totalStepPages = Math.max(1, Math.ceil(steps.length / STEPS_PER_PAGE));
+    stepCurrentPage = Math.min(stepCurrentPage, totalStepPages - 1);
+
+    const start = stepCurrentPage * STEPS_PER_PAGE;
+    const currentSteps = steps.slice(start, start + STEPS_PER_PAGE);
+
+    const icons = ["🥄", "🍳", "🔥", "🧂", "🍲", "🌿", "🍽️"];
+    document.getElementById('recStepsList').innerHTML = currentSteps.map((st, i) => {
+      const stepNum = start + i + 1;
+      const icon = icons[(stepNum - 1) % icons.length];
+      return `
+        <div class="step-card-box">
+          <strong>Step ${stepNum} ${icon}:</strong> ${st}
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById('stepRangeTag').innerText = `Steps ${start + 1}-${Math.min(start + STEPS_PER_PAGE, steps.length)} of ${steps.length}`;
+    document.getElementById('stepPageIndicator').innerText = `${stepCurrentPage + 1} / ${totalStepPages}`;
+    document.getElementById('btnStepPrev').disabled = (stepCurrentPage === 0);
+    document.getElementById('btnStepNext').disabled = (stepCurrentPage >= totalStepPages - 1);
+  }
+
+  function changeStepPage(delta) {
+    const r = RECIPES[currentRecipeIndex];
+    const steps = r.steps || [];
+    const totalStepPages = Math.max(1, Math.ceil(steps.length / STEPS_PER_PAGE));
+    stepCurrentPage = Math.max(0, Math.min(totalStepPages - 1, stepCurrentPage + delta));
+    renderSteps();
+  }
+
+  function rateActiveRecipe(stars) {
+    const r = RECIPES[currentRecipeIndex];
+    ratingsMap[r.id] = stars;
+    try {
+      localStorage.setItem('wannabechef_ratings', JSON.stringify(ratingsMap));
+    } catch(e) {}
+    updateStarDisplay(stars);
+    const msg = document.getElementById('ratedMessage');
+    msg.innerText = `Saved ${stars}★!`;
+    setTimeout(() => { msg.innerText = ''; }, 2000);
+  }
+
+  function updateStarDisplay(stars) {
+    const starEls = document.querySelectorAll('.star-rating-box .star');
+    starEls.forEach((el, idx) => {
+      if (idx < stars) el.classList.add('active');
+      else el.classList.remove('active');
+    });
+  }
+
+  function setPantrySearch(text) {
+    document.getElementById('pantryInput').value = text;
+    onPantryChange(text);
+  }
+
+  function onPantryChange(val) {
+    currentPantryQuery = val.toLowerCase().trim();
+    if (!currentPantryQuery) {
+      document.getElementById('pantryRecipeList').innerHTML = '<div style="font-family:Patrick Hand, cursive; font-size:14px; color:#8C6A53; text-align:center; padding-top:40px;">Enter ingredients or choose a preset idea above!</div>';
+      return;
+    }
+    const userTokens = currentPantryQuery.split(',').map(s => s.trim()).filter(Boolean);
+    const scored = RECIPES.map(r => {
+      const ings = (r.ingredients || []).map(i => i.toLowerCase());
+      let matches = 0;
+      userTokens.forEach(ut => {
+        if (ings.some(ing => ing.includes(ut) || ut.includes(ing))) matches++;
+      });
+      const score = userTokens.length ? (matches / userTokens.length) : 0;
+      return { recipe: r, score };
+    }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 5);
+
+    const container = document.getElementById('pantryRecipeList');
+    if (scored.length === 0) {
+      container.innerHTML = '<div style="font-family:Patrick Hand, cursive; font-size:14px; color:#8C6A53; text-align:center; padding-top:40px;">No exact recipe matches found. Try adding more pantry spices!</div>';
+    } else {
+      container.innerHTML = scored.map(item => `
+        <div class="index-recipe-row" onclick="selectRecipeById(${item.recipe.id})">
+          <div class="row-meta-left">
+            <span class="row-title">${item.recipe.title}</span>
+            <span class="row-sub">✨ ${Math.round(item.score * 100)}% match • ${item.recipe.cuisine}</span>
+          </div>
+          <button class="row-btn-read">📖 Read</button>
+        </div>
+      `).join('');
+    }
+  }
+
+  function renderDiary() {
+    const container = document.getElementById('diaryRecipeList');
+    const ratedIds = Object.keys(ratingsMap);
+    if (!ratedIds.length) {
+      container.innerHTML = '<div style="font-family:Patrick Hand, cursive; font-size:14px; color:#8C6A53; text-align:center; padding-top:40px;">No recipes rated yet! Turn pages, cook a recipe, and give it stars! ⭐</div>';
+      return;
+    }
+    const ratedRecipes = RECIPES.filter(r => ratedIds.includes(String(r.id)));
+    container.innerHTML = ratedRecipes.map(r => `
+      <div class="index-recipe-row" onclick="selectRecipeById(${r.id})">
+        <div class="row-meta-left">
+          <span class="row-title">${r.title}</span>
+          <span class="row-sub">${'★'.repeat(ratingsMap[r.id])} • ${r.cuisine}</span>
+        </div>
+        <button class="row-btn-read">📖 Read</button>
+      </div>
+    `).join('');
+  }
+
+  // Keyboard controls
+  window.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === 'ArrowRight') navigateRecipe(1);
+    else if (e.key === 'ArrowLeft') navigateRecipe(-1);
+    else if (e.key === 'Escape') closeBook();
+  });
+
+  window.onload = initApp;
+</script>
+</body>
+</html>
