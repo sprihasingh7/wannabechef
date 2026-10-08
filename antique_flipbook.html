@@ -32,8 +32,8 @@
   .table-stage {
     position: relative;
     width: 100%;
-    max-width: 1140px;
-    height: 610px;
+    max-width: 1020px;
+    height: 450px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -47,8 +47,9 @@
   /* ========================================================= */
   .closed-book-wrapper {
     position: absolute;
-    width: 440px;
-    height: 540px;
+    width: 360px;
+    height: 430px;
+    margin-left: -6px; /* Balance right page thickness for perfect centering */
     transform-style: preserve-3d;
     transition: transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.4s ease;
     cursor: pointer;
@@ -68,13 +69,13 @@
       radial-gradient(circle at 50% 30%, #68371c 0%, #421e0e 70%, #250f05 100%);
     border-radius: 12px 24px 24px 12px;
     border: 4px solid #200d04;
-    border-left: 24px solid #160702; /* Heavy leather spine */
+    border-left: 20px solid #160702; /* Heavy leather spine */
     box-shadow: 
       -10px 0 25px rgba(0,0,0,0.8),
       15px 25px 50px rgba(10, 5, 2, 0.7),
       inset 0 0 40px rgba(0,0,0,0.6);
     position: relative;
-    padding: 20px 24px 18px 24px;
+    padding: 16px 20px 14px 34px; /* Offset spine so text is centered in cover */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -85,24 +86,24 @@
   /* Brass Ornaments */
   .brass-corner {
     position: absolute;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     background: radial-gradient(circle, #fae4a2 20%, #d4af37 60%, #87681c 100%);
     border: 2px solid #4a3809;
     box-shadow: 0 3px 6px rgba(0,0,0,0.5);
     z-index: 5;
   }
-  .brass-corner.tl { top: 6px; left: 6px; border-radius: 8px 0 30px 0; }
-  .brass-corner.tr { top: 6px; right: 6px; border-radius: 0 16px 0 30px; }
-  .brass-corner.bl { bottom: 6px; left: 6px; border-radius: 0 30px 0 8px; }
-  .brass-corner.br { bottom: 6px; right: 6px; border-radius: 30px 0 16px 0; }
+  .brass-corner.tl { top: 4px; left: 18px; border-radius: 6px 0 26px 0; }
+  .brass-corner.tr { top: 4px; right: 4px; border-radius: 0 14px 0 26px; }
+  .brass-corner.bl { bottom: 4px; left: 18px; border-radius: 0 26px 0 6px; }
+  .brass-corner.br { bottom: 4px; right: 4px; border-radius: 26px 0 14px 0; }
 
   .cover-emboss-border {
     position: absolute;
-    top: 16px;
-    bottom: 16px;
-    left: 16px;
-    right: 16px;
+    top: 12px;
+    bottom: 12px;
+    left: 26px; /* Offset spine for centered gold border */
+    right: 12px;
     border: 2px solid rgba(212, 175, 55, 0.65);
     outline: 1px dashed rgba(249, 226, 157, 0.45);
     outline-offset: -5px;
@@ -112,10 +113,10 @@
 
   .closed-ribbon-tail {
     position: absolute;
-    bottom: -16px;
-    right: 80px;
-    width: 26px;
-    height: 46px;
+    bottom: -14px;
+    right: 70px;
+    width: 22px;
+    height: 40px;
     background: linear-gradient(135deg, #1b5e20, #2e7d32 60%, #144618);
     box-shadow: 0 5px 12px rgba(0,0,0,0.6);
     clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
@@ -123,15 +124,15 @@
   }
 
   .cover-filigree {
-    font-size: 20px;
+    font-size: 18px;
     color: #e6ca65;
     text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-    margin-top: 4px;
+    margin: 0;
   }
 
   .cover-sub-title {
     font-family: 'Marcellus SC', serif;
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 3px;
     color: #dfba63;
     text-transform: uppercase;
@@ -141,27 +142,27 @@
 
   .cover-main-title {
     font-family: 'Playfair Display', serif;
-    font-size: 38px;
+    font-size: 32px;
     font-weight: 700;
     color: #FFF2DF;
     text-shadow: 0 3px 10px rgba(0,0,0,0.9), 0 0 20px rgba(230, 202, 101, 0.4);
     letter-spacing: 1px;
     line-height: 1.1;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
 
   .cover-tagline {
     font-family: 'Patrick Hand', cursive;
-    font-size: 15px;
+    font-size: 14px;
     color: #edd18e;
     text-shadow: 0 1px 4px rgba(0,0,0,0.7);
-    max-width: 290px;
-    line-height: 1.25;
+    max-width: 250px;
+    line-height: 1.2;
   }
 
   .cover-illustration {
-    font-size: 42px;
-    margin: 4px 0;
+    font-size: 36px;
+    margin: 2px 0;
     filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
     animation: gentlePulse 3s infinite ease-in-out;
   }
@@ -175,15 +176,15 @@
     background: linear-gradient(180deg, #E5A93B 0%, #B8731F 100%);
     color: #261305;
     font-family: 'Playfair Display', serif;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
-    padding: 10px 24px;
+    padding: 8px 20px;
     border: 2px solid #FFF1C5;
     border-radius: 30px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.6);
     cursor: pointer;
     transition: all 0.25s ease;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
 
   .btn-open-book:hover {
@@ -194,10 +195,10 @@
 
   .closed-book-pages-side {
     position: absolute;
-    right: -14px;
-    top: 14px;
-    bottom: 14px;
-    width: 14px;
+    right: -12px;
+    top: 12px;
+    bottom: 12px;
+    width: 12px;
     background: repeating-linear-gradient(
       180deg,
       #FDF8EE 0px,
@@ -216,8 +217,8 @@
   /* ========================================================= */
   .open-book-wrapper {
     position: relative;
-    width: 1080px;
-    height: 600px;
+    width: 980px;
+    height: 430px;
     transform-style: preserve-3d;
     transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.5s ease;
     opacity: 0;
@@ -234,10 +235,10 @@
   /* Hardcover Base Outline */
   .book-hardcover-base {
     position: absolute;
-    top: -10px;
-    bottom: -10px;
-    left: -14px;
-    right: -14px;
+    top: -8px;
+    bottom: -8px;
+    left: -12px;
+    right: -12px;
     background: 
       radial-gradient(circle at 50% 50%, #4D2614 0%, #36170A 80%, #1E0A03 100%);
     border-radius: 20px;
@@ -338,7 +339,7 @@
   .book-page {
     width: 50%;
     height: 100%;
-    padding: 16px 22px 12px 22px;
+    padding: 10px 18px 8px 18px;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -565,15 +566,16 @@
   .index-recipe-list {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    height: 385px;
+    gap: 3px;
+    height: 205px;
+    overflow-y: auto;
   }
 
   .index-recipe-row {
     background: #FFFFFF;
     border: 1px solid #EADDCF;
     border-radius: 8px;
-    padding: 7px 10px;
+    padding: 5px 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -597,7 +599,7 @@
     max-width: 340px;
   }
   .row-title {
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 700;
     color: #38241B;
     white-space: nowrap;
@@ -605,7 +607,7 @@
     text-overflow: ellipsis;
   }
   .row-sub {
-    font-size: 11px;
+    font-size: 10.5px;
     color: #8C6A53;
     font-family: 'Patrick Hand', cursive;
   }
@@ -615,9 +617,9 @@
     border: 1px solid #D95D39;
     color: #D95D39;
     font-family: 'Patrick Hand', cursive;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 2px 7px;
     border-radius: 8px;
     cursor: pointer;
   }
@@ -631,10 +633,10 @@
     justify-content: space-between;
     align-items: center;
     border-top: 1px dashed #DCC8B0;
-    padding-top: 6px;
-    margin-top: 4px;
+    padding-top: 4px;
+    margin-top: 2px;
     font-family: 'Patrick Hand', cursive;
-    font-size: 14px;
+    font-size: 13px;
     color: #7A5B45;
   }
 
@@ -706,12 +708,12 @@
 
   .recipe-main-title {
     font-family: 'Playfair Display', serif;
-    font-size: 20px;
+    font-size: 17px;
     font-weight: 700;
     color: #38241B;
     text-align: center;
-    line-height: 1.2;
-    margin-bottom: 5px;
+    line-height: 1.15;
+    margin-bottom: 3px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -720,19 +722,19 @@
   /* Hero: Photo & Stats */
   .recipe-hero-box {
     display: grid;
-    grid-template-columns: 130px 1fr;
-    gap: 10px;
+    grid-template-columns: 100px 1fr;
+    gap: 8px;
     background: #FFFDF9;
     border: 1px solid #EADBCE;
-    border-radius: 10px;
-    padding: 6px 8px;
-    margin-bottom: 8px;
+    border-radius: 8px;
+    padding: 4px 6px;
+    margin-bottom: 5px;
     align-items: center;
   }
 
   .recipe-hero-box img {
-    width: 130px;
-    height: 88px;
+    width: 100px;
+    height: 68px;
     object-fit: cover;
     border-radius: 6px;
     border: 1px solid #D6C2A5;
@@ -741,20 +743,20 @@
   .hero-stats-content {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
   }
 
   .stats-badges-line {
     display: flex;
-    gap: 5px;
+    gap: 4px;
     flex-wrap: wrap;
   }
 
   .badge-chip {
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 600;
-    padding: 1px 6px;
-    border-radius: 6px;
+    padding: 1px 5px;
+    border-radius: 5px;
     background: #F4EAE0;
     color: #5C3825;
   }
@@ -765,15 +767,15 @@
     background: #FFF5EE;
     color: #B54728;
     font-family: 'Patrick Hand', cursive;
-    font-size: 12.5px;
+    font-size: 11.5px;
     font-weight: 700;
-    padding: 1px 7px;
-    border-radius: 10px;
+    padding: 1px 6px;
+    border-radius: 8px;
     width: fit-content;
   }
 
   .macro-nutrition-bar {
-    font-size: 11px;
+    font-size: 10.5px;
     color: #7A5B45;
   }
   .macro-nutrition-bar strong {
@@ -783,9 +785,9 @@
   /* Split Details Grid */
   .recipe-details-grid {
     display: grid;
-    grid-template-columns: 180px 1fr;
-    gap: 10px;
-    height: 335px;
+    grid-template-columns: 155px 1fr;
+    gap: 8px;
+    height: 195px;
     overflow: hidden;
   }
 
@@ -797,10 +799,10 @@
 
   .panel-title {
     font-family: 'Patrick Hand', cursive;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: #5C3825;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -810,18 +812,18 @@
   .ingredients-checklist {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
     background: #FFFFFF;
     border: 1px solid #EBDCCF;
     border-radius: 6px;
-    padding: 5px 7px;
-    height: 300px;
+    padding: 4px 6px;
+    height: 170px;
     overflow-y: auto;
     scrollbar-width: thin;
   }
 
   .ing-check-item {
-    font-size: 11px;
+    font-size: 10.5px;
     color: #38241B;
     display: flex;
     align-items: flex-start;
@@ -829,7 +831,7 @@
     line-height: 1.25;
   }
   .ing-check-item input {
-    margin-top: 2px;
+    margin-top: 1px;
     accent-color: #D95D39;
     cursor: pointer;
   }
@@ -849,8 +851,8 @@
   .step-cards-list {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    height: 265px;
+    gap: 3px;
+    height: 140px;
     overflow: hidden;
   }
 
@@ -861,9 +863,9 @@
     border-right: 1px solid #F3E7DC;
     border-bottom: 1px solid #F3E7DC;
     border-radius: 0 6px 6px 0;
-    padding: 5px 8px;
-    font-size: 11.5px;
-    line-height: 1.35;
+    padding: 4px 6px;
+    font-size: 11px;
+    line-height: 1.25;
     color: #38241B;
   }
   .step-card-box strong {
@@ -875,19 +877,19 @@
     justify-content: space-between;
     align-items: center;
     font-family: 'Patrick Hand', cursive;
-    font-size: 13px;
+    font-size: 12px;
     color: #8C6A53;
-    padding-top: 3px;
+    padding-top: 2px;
   }
   .btn-step-flip {
     background: #FFF2DF;
     border: 1px solid #CDB295;
     color: #7E3D21;
     font-family: 'Patrick Hand', cursive;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 8px;
+    padding: 2px 7px;
+    border-radius: 6px;
     cursor: pointer;
   }
   .btn-step-flip:hover:not(:disabled) {
@@ -905,8 +907,8 @@
     justify-content: space-between;
     align-items: center;
     border-top: 1px dashed #DCC8B0;
-    padding-top: 6px;
-    margin-top: 4px;
+    padding-top: 4px;
+    margin-top: 2px;
   }
 
   .star-rating-box {
@@ -962,35 +964,42 @@
   @media (max-width: 1100px) and (min-width: 821px) {
     .table-stage {
       max-width: 98vw;
-      height: 590px;
+      height: 440px;
     }
     .open-book-wrapper {
-      width: 96vw;
-      height: 580px;
+      width: min(96vw, 980px);
+      height: 420px;
     }
     .closed-book-wrapper {
-      width: min(420px, 86vw);
-      height: min(530px, 88vh);
+      width: min(350px, 86vw);
+      height: min(420px, 88vh);
     }
     .book-page {
-      padding: 10px 14px 8px 14px;
+      padding: 8px 14px 6px 14px;
     }
     .recipe-hero-box {
-      grid-template-columns: 110px 1fr;
-      gap: 8px;
-      padding: 5px;
+      grid-template-columns: 95px 1fr;
+      gap: 6px;
+      padding: 3px 5px;
+      margin-bottom: 3px;
     }
     .recipe-hero-box img {
-      width: 110px;
-      height: 75px;
+      width: 95px;
+      height: 62px;
     }
     .recipe-details-grid {
-      grid-template-columns: 150px 1fr;
-      height: 290px;
-      gap: 8px;
+      grid-template-columns: 140px 1fr;
+      height: 185px;
+      gap: 6px;
+    }
+    .ingredients-checklist {
+      height: 160px;
+    }
+    .step-cards-list {
+      height: 130px;
     }
     .index-recipe-list {
-      height: 330px;
+      height: 195px;
     }
   }
 
@@ -1006,42 +1015,43 @@
       max-width: 100vw;
       height: 100vh;
       height: 100dvh;
-      min-height: 500px;
-      max-height: 640px;
+      min-height: 440px;
+      max-height: 520px;
       perspective: 1600px;
       padding: 4px;
     }
 
     /* Closed Book Mobile */
     .closed-book-wrapper {
-      width: min(92vw, 390px);
-      height: min(88vh, 520px);
+      width: min(92vw, 340px);
+      height: min(88vh, 440px);
+      margin-left: 0;
     }
     .cover-main-title {
-      font-size: clamp(26px, 7vw, 34px);
+      font-size: clamp(24px, 6.5vw, 30px);
     }
     .cover-tagline {
-      font-size: 14px;
-      max-width: 250px;
+      font-size: 13px;
+      max-width: 230px;
     }
     .btn-open-book {
-      font-size: 15px;
-      padding: 9px 20px;
+      font-size: 14px;
+      padding: 8px 18px;
     }
 
     /* Open Book Mobile */
     .open-book-wrapper {
-      width: min(96vw, 440px);
-      height: min(90vh, 590px);
+      width: min(96vw, 420px);
+      height: min(90vh, 460px);
       transform: scale(1);
     }
 
     .book-hardcover-base {
-      top: -8px;
-      bottom: -8px;
-      left: -10px;
-      right: -10px;
-      border-radius: 16px;
+      top: -6px;
+      bottom: -6px;
+      left: -8px;
+      right: -8px;
+      border-radius: 14px;
     }
 
     .stacked-edge {
@@ -1403,10 +1413,10 @@
 
     if (availW <= 820) {
       // Mobile screen mode
-      const baseH = isClosed ? 530 : 610;
-      const baseW = isClosed ? 380 : 420;
-      if (availH < baseH + 16 || availW < baseW + 16) {
-        const s = Math.min(1, (availH - 12) / baseH, (availW - 12) / baseW);
+      const baseH = isClosed ? 440 : 480;
+      const baseW = isClosed ? 340 : 380;
+      if (availH < baseH + 12 || availW < baseW + 12) {
+        const s = Math.min(1, (availH - 8) / baseH, (availW - 8) / baseW);
         stage.style.transform = `scale(${Math.max(0.65, s)})`;
       } else {
         stage.style.transform = 'none';
@@ -1416,17 +1426,18 @@
     }
 
     // Tablet landscape, laptop & desktop (> 820px)
-    const targetW = isClosed ? 460 : 1090;
-    const targetH = isClosed ? 560 : 615;
+    const targetW = isClosed ? 370 : 990;
+    const targetH = isClosed ? 440 : 445;
 
     // Safety padding so book is never clipped on any edge
-    const paddingX = 24;
-    const paddingY = 20;
+    const paddingX = 16;
+    const paddingY = 14;
     const scaleX = (availW - paddingX) / targetW;
     const scaleY = (availH - paddingY) / targetH;
     
-    // Scale up to 1.0 (or down to whatever is needed to fit 100% inside the viewport)
-    const scale = Math.min(1.0, scaleX, scaleY);
+    // Scale up to 1.15 on large 1080p+ screens, or down as needed on tight screens
+    const maxScale = availH >= 700 ? 1.15 : 1.0;
+    const scale = Math.min(maxScale, scaleX, scaleY);
 
     stage.style.transform = `scale(${scale})`;
     stage.style.transformOrigin = 'center center';

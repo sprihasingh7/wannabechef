@@ -147,4 +147,4 @@ flipbook_html = html_template.replace(
     f"let RECIPES = {recipes_json_str};"
 )
 
-components.html(flipbook_html, height=550, scrolling=False)
+components.html(flipbook_html, height=480, scrolling=False)
