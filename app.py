@@ -99,9 +99,38 @@ st.markdown("""
         justify-content: center !important;
     }
 
+    /* Hide the first element-container containing the style markdown tag so it takes zero height */
+    div[data-testid="element-container"]:first-child,
+    div[data-testid="stElementContainer"]:first-child,
+    div[data-testid="stMarkdown"],
+    .stMarkdown {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        max-height: 0 !important;
+        min-height: 0 !important;
+        width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        position: absolute !important;
+        pointer-events: none !important;
+    }
+
     div[data-testid="stVerticalBlock"],
-    div[data-testid="stVerticalBlockBorderWrapper"],
-    div[data-testid="element-container"],
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0 !important;
+    }
+
+    div[data-testid="element-container"]:not(:first-child),
+    div[data-testid="stElementContainer"]:not(:first-child),
     div[data-testid="stCustomComponentV1"] {
         padding: 0 !important;
         margin: 0 !important;
@@ -110,7 +139,6 @@ st.markdown("""
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 0 !important;
     }
 
     iframe {
